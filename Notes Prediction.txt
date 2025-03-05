@@ -1,0 +1,34 @@
+Simulation Programme:
+
+Étape:
+
+1- Traité les donnees
+-Nettoyer les donnees, donc les donnees inutiles
+-Ajouter des colonnes qui peuvent etre interansant pour faire le projet
+
+2- Exploration et analyse des donnees
+-Afficher les statistiques de base (data.describe())
+-Visualiser les distributions (histogrammes, heatmaps des corrélations)
+-Vérifier l’équilibre des classes (victoires, défaites, nuls)
+
+3- Feature Engineering
+- Créer de nouvelles variables (ex: moyenne des buts des 5 derniers matchs, historique des confrontations entre équipes)
+- Ajouter des métriques comme xG (Expected Goals) si disponible
+
+4- Entraînement du modèle
+-Définir les features (X) et la variable cible (y, ex: résultat du match)
+-Séparer les données en train/test (train_test_split())
+-Tester plusieurs modèles (RandomForestClassifier, LogisticRegression, XGBoost...)
+
+5- Évaluation du modèle
+-Calculer la précision (accuracy_score)
+-Analyser la matrice de confusion (confusion_matrix)
+-Tester avec des métriques comme F1-score, ROC-AUC
+
+6- Prédiction des matchs
+Entrer des nouvelles données (matchs futurs)
+Générer des prédictions et afficher les résultats
+
+7-Simulation de matchs
+Simuler plusieurs matchs entre équipes aléatoires
+Générer un classement basé sur les résultats simulés

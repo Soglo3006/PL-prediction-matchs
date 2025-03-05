@@ -1,0 +1,13 @@
+HomeTeam / AwayTeam : Équipes jouant à domicile et à l'extérieur.
+FTHG / FTAG : Nombre de buts à domicile et à l'extérieur.
+FTR : Résultat final (H : Victoire à domicile, D : Match nul, A : Victoire à l'extérieur).
+HST / AST : Tirs cadrés à domicile et à l'extérieur.
+HF / AF : Fautes commises à domicile et à l'extérieur.
+HC / AC : Corners obtenus.
+HY / AY : Cartons jaunes.
+HR / AR : Cartons rouges.
+
+
+
+Machine learning data ne peut que marcher avec le type float64 ou int64. Donc non des objects.
+
