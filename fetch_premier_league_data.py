@@ -64,7 +64,7 @@ def calculate_form(data, team_col, result_col, new_col):
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 
-#print(data_2324)
+print(data_2324)
 
 features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', 'home_form','away_form']
 
@@ -103,10 +103,54 @@ def predict_future_match(home_team, away_team, model, data):
     elif prediction == 'A':
         return away_team
 
+def avantageDomicile(data):
+    Équipe_victoires_domicile = {}
+    for i in data['HomeTeam'].unique():
+        Équipe_victoires_domicile[i] = 0
+    for y in range(len(data)):
+        if data.loc[y,'FullTimeResult'] == 'H':
+            Équipe_victoires_domicile[data.loc[y,'HomeTeam']] += 1
+    for j in Équipe_victoires_domicile:
+        Équipe_victoires_domicile[j] = round(Équipe_victoires_domicile[j]/19,2)
+    porucentage_victoire = dict(sorted(Équipe_victoires_domicile.items()))
+    for i in range(len(data)):
+        if porucentage_victoire[data.loc[i,'HomeTeam']] > porucentage_victoire[data_2324.loc[i,'AwayTeam']]:
+            data.loc[i,'home_advantage'] = 1
+        else:
+            data.loc[i,'home_advantage'] = 0
+
+avantageDomicile(data_2324)
+
+def moyenne_domcile(data):
+    Équipe_domicile= {}
+
+    for i in data['HomeTeam'].unique():
+        Équipe_domicile[i] = 0
+    for y in range(len(data)):
+        for j in Équipe_domicile:
+            if data.loc[y,'HomeTeam'] == j:
+                Équipe_domicile[j] += int(data.loc[y,'HomeGoal'])
+    moyenne_buts_domicile = dict(sorted(Équipe_domicile.items()))
+    for moy in moyenne_buts_domicile:
+        moyenne_buts_domicile[moy] = round(moyenne_buts_domicile[moy]/19,2)
+
+def moyenne_exterieru(data):
+    Équipe_extérieur = {}
+    for i in data['AwayTeam'].unique():
+        Équipe_extérieur[i] = 0
+    for y in range(len(data)):
+        for j in Équipe_extérieur:
+            if data.loc[y,'AwayTeam'] == j:
+                Équipe_extérieur[j] += int(data.loc[y,'AwayGoal'])
+    moyenne_buts_extérieur = dict(sorted(Équipe_extérieur.items()))
+    for moy in moyenne_buts_extérieur :
+        moyenne_buts_extérieur[moy] = round(moyenne_buts_extérieur[moy]/19,2)
+
+
 # Exemple de prédiction
-home_team = str(random.choice(data_2324['HomeTeam'].unique()))
-away_team = str(random.choice(data_2324['AwayTeam'].unique()))
-if home_team != away_team:
-    predicted_result = predict_future_match(home_team, away_team, model, data_2324)
-    print(f"Prédiction pour {home_team} vs {away_team} : {predicted_result}")
+#home_team = str(random.choice(data_2324['HomeTeam'].unique()))
+#away_team = str(random.choice(data_2324['AwayTeam'].unique()))
+#if home_team != away_team:
+#    predicted_result = predict_future_match(home_team, away_team, model, data_2324)
+#    print(f"Prédiction pour {home_team} vs {away_team} : {predicted_result}")
 
