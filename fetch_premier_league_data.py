@@ -130,9 +130,9 @@ data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_domcile(data_2324),moyenne_exterieru(data_2324))
 
-print(data_2324)
+#print(data_2324)
 features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
-            , 'home_form','away_form', 'home_advantage','difference_moyenne']
+            , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne']
 
 
 X = data_2324[features]
@@ -166,7 +166,7 @@ def predict_future_match(h_team, a_team, model, data):
     
 
     match_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,
-                                    home_form, away_form, home_advantage, difference_moyenne]],
+                                    home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne]],
                                   columns=features)
     print(match_features)
 
