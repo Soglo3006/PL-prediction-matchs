@@ -64,8 +64,6 @@ def calculate_form(data, team_col, result_col, new_col):
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 
-print(data_2324)
-
 features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', 'home_form','away_form']
 
 
@@ -119,7 +117,8 @@ def avantageDomicile(data):
         else:
             data.loc[i,'home_advantage'] = 0
 
-avantageDomicile(data_2324)
+#avantageDomicile(data_2324)
+#print(data_2324)
 
 def moyenne_domcile(data):
     Équipe_domicile= {}
@@ -133,6 +132,10 @@ def moyenne_domcile(data):
     moyenne_buts_domicile = dict(sorted(Équipe_domicile.items()))
     for moy in moyenne_buts_domicile:
         moyenne_buts_domicile[moy] = round(moyenne_buts_domicile[moy]/19,2)
+    return moyenne_buts_domicile
+        
+        
+#print(moyenne_domcile(data_2324))
 
 def moyenne_exterieru(data):
     Équipe_extérieur = {}
@@ -145,6 +148,24 @@ def moyenne_exterieru(data):
     moyenne_buts_extérieur = dict(sorted(Équipe_extérieur.items()))
     for moy in moyenne_buts_extérieur :
         moyenne_buts_extérieur[moy] = round(moyenne_buts_extérieur[moy]/19,2)
+    return moyenne_buts_extérieur
+        
+        
+#print(moyenne_exterieru(data_2324))
+
+def difference_buts(data, moyenne_dom, moyenne_ext):
+    dom = moyenne_dom
+    ext = moyenne_ext
+    for i in range(len(data)):
+        if dom[data.loc[i,'HomeTeam']]> ext[data.loc[i,'AwayTeam']] : 
+            data.loc[i,'difference'] = dom[data.loc[i,'HomeTeam']] - ext[data.loc[i,'AwayTeam']]
+            data.loc[i,'difference_nom'] = data.loc[i,'HomeTeam']
+        else:
+            data.loc[i,'difference'] = ext[data.loc[i,'AwayTeam']] - dom[data.loc[i,'HomeTeam']]
+            data.loc[i,'difference_nom'] = data.loc[i,'AwayTeam']
+
+difference_buts(data_2324,moyenne_domcile(data_2324),moyenne_exterieru(data_2324))
+print(data_2324)
 
 
 # Exemple de prédiction
