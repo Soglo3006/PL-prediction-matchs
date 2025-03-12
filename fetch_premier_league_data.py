@@ -65,31 +65,21 @@ def avantageDomicile(data):
             data.loc[i,'home_advantage'] = 0
 
 
-def moyenne_stats_buts(data,dictionnaire,équipe,but):
+def moyenne_stats_buts(data,dictionnaire,équipe,but,newCol):
     for i in data[équipe].unique():
         dictionnaire[i] = 0
+        dictionnaire = dict(sorted(dictionnaire.items()))
     for y in range(len(data)):
         for j in dictionnaire:
             if data.loc[y,équipe] == j:
                 dictionnaire[j] += int(data.loc[y,but])
-    moyenne_buts_domicile = dict(sorted(dictionnaire.items()))
-    for moy in moyenne_buts_domicile:
-        moyenne_buts_domicile[moy] = round(moyenne_buts_domicile[moy]/19,2)
+    for moy in dictionnaire:
+        dictionnaire[moy] = round(dictionnaire[moy]/19,2)
     for k in range(len(data)):
-        for nom_équipe in moyenne_buts_domicile:
+        for nom_équipe in dictionnaire:
             if nom_équipe == data.loc[k,équipe]:
-                data.loc[k,'moyenne_domcile_buts'] = moyenne_buts_domicile[nom_équipe]
-    return moyenne_buts_domicile
-
-Équipe_domicile= {}
-Équipe_extérieur = {}
-moy_buts_conceder_dom = {}
-moy_buts_conceder_ext = {}
-print(moyenne_stats_buts(data_2324,Équipe_domicile,'HomeTeam','HomeGoal'))
-print(moyenne_stats_buts(data_2324,Équipe_extérieur,'AwayTeam','AwayGoal'))
-print(moyenne_stats_buts(data_2324,moy_buts_conceder_dom,'HomeTeam','AwayGoal'))
-print(moyenne_stats_buts(data_2324,moy_buts_conceder_ext,'AwayTeam','HomeGoal'))
-
+                data.loc[k,newCol] = dictionnaire[nom_équipe]
+    return dictionnaire
 def difference_buts(data, moyenne_dom, moyenne_ext):
     dom = moyenne_dom
     ext = moyenne_ext
@@ -116,20 +106,20 @@ data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ACorners', 'Away_avgCorner')
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 
-#avantageDomicile(data_2324)
-#difference_buts(data_2324,moyenne_domcile(data_2324),moyenne_exterieru(data_2324))
+Équipe_domicile= {}
+Équipe_extérieur = {}
+moy_buts_conceder_dom = {}
+moy_buts_conceder_ext = {}
+moyenne_dom_but = moyenne_stats_buts(data_2324,Équipe_domicile,'HomeTeam','HomeGoal','moyenne_domcile_buts')
+moyenne_ext_but = moyenne_stats_buts(data_2324,Équipe_extérieur,'AwayTeam','AwayGoal','moyenne_exterieur_buts')
+moyenne_con_but_dom = moyenne_stats_buts(data_2324,moy_buts_conceder_dom,'HomeTeam','AwayGoal','moyenne_conceder_dom')
+moyenne_con_but_ext = moyenne_stats_buts(data_2324,moy_buts_conceder_ext,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
+avantageDomicile(data_2324)
+difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but)
 
-
-    
-
-    
-
-
-
-
-#print(moy_buts_conceder_dom)
 #print(data_2324)
+
 features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne']
 
@@ -138,9 +128,6 @@ X = data_2324[features]
 y_home = data_2324['HomeGoal']
 y_away = data_2324['AwayGoal']
 
-
-
-""""
 # Séparation des données en jeu d'entraînement et de test
 X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
 W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
@@ -167,8 +154,8 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     home_form = data[data['HomeTeam'] == h_team]['home_form'].values[-1]
     away_form = data[data['AwayTeam'] == a_team]['away_form'].values[-1]
     home_advantage = data[data['HomeTeam'] == h_team]['home_advantage'].values[-1]
-    moyenne_domcile_buts = moyenne_domcile(data)[h_team]
-    moyenne_extérieur_buts = moyenne_exterieru(data)[a_team]
+    moyenne_domcile_buts = moyenne_dom_but[h_team]
+    moyenne_extérieur_buts = moyenne_ext_but[a_team]
     difference_moyenne = moyenne_domcile_buts - moyenne_extérieur_buts
     
 
@@ -181,9 +168,9 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     print(prediction_buts_domicile)
     print(prediction_buts_extérieur)
     if prediction_buts_domicile > prediction_buts_extérieur:
-        return {prediction_buts_domicile : prediction_buts_extérieur }
+        return {prediction_buts_domicile:prediction_buts_extérieur}
     else:
-        return {prediction_buts_extérieur : prediction_buts_domicile }
+        return {prediction_buts_extérieur:prediction_buts_domicile}
     
 
 
@@ -192,4 +179,3 @@ a_team = 'Newcastle'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
-"""
