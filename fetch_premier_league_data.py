@@ -121,7 +121,8 @@ difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but)
 #print(data_2324)
 
 features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
-            , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne']
+            , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne', 
+            'moyenne_conceder_dom', 'moyenne_conceder_ext']
 
 
 X = data_2324[features]
@@ -156,11 +157,13 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     home_advantage = data[data['HomeTeam'] == h_team]['home_advantage'].values[-1]
     moyenne_domcile_buts = moyenne_dom_but[h_team]
     moyenne_extérieur_buts = moyenne_ext_but[a_team]
+    moyenne_conceder_dom = moyenne_con_but_dom[h_team]
+    moyenne_conceder_ext = moyenne_con_but_ext[a_team]
     difference_moyenne = moyenne_domcile_buts - moyenne_extérieur_buts
     
 
     match_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,
-                                    home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne]],
+                                    home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne,moyenne_conceder_dom, moyenne_conceder_ext]],
                                   columns=features)
     print(match_features)
     prediction_buts_domicile = round(model_1.predict(match_features)[0])
