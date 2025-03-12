@@ -136,16 +136,22 @@ features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
 
 
 X = data_2324[features]
-y = data_2324['FullTimeResult']
+y_home = data_2324['HomeGoal']
+y_away = data_2324['AwayGoal']
+
 
 # Séparation des données en jeu d'entraînement et de test
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
+W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
 
 # Entraînement du modèle
-model = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=1)
-model.fit(X_train, y_train)
+model_home = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=1)
+model_home.fit(X_train, y_train)
 
-def predict_future_match(h_team, a_team, model, data):
+model_away = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=1)
+model_away.fit(W_train,Z_train)
+
+def predict_future_match(h_team, a_team, model_1, model_2, data):
     if h_team not in data['HomeTeam'].unique():
         #print(f"Erreur : {home_team} n'existe pas dans les données !")
         return None
@@ -169,20 +175,21 @@ def predict_future_match(h_team, a_team, model, data):
                                     home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne]],
                                   columns=features)
     print(match_features)
-
-    prediction = model.predict(match_features)[0]
-    if prediction == 'H':
-        return h_team
-    elif prediction == 'A':
-        return a_team
-    else:
-        return 'Draw'
+    prediction_buts_domicile = model_1.predict(match_features)[0]
+    prediction_buts_extérieur = model_2.predict(match_features)[0]
+    print(prediction_buts_domicile)
+    print(prediction_buts_extérieur)
+    #if prediction == 'H':
+    #    return h_team
+    #elif prediction == 'A':
+    #    return a_team
+    #else:
+    #    return 'Draw'
     
 
 
 h_team = str(random.choice(data_2324['HomeTeam'].unique()))
 a_team = str(random.choice(data_2324['AwayTeam'].unique()))
 if h_team != a_team:
-    predicted_result = predict_future_match(h_team, a_team, model, data_2324)
+    predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
-
