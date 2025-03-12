@@ -65,26 +65,28 @@ def avantageDomicile(data):
             data.loc[i,'home_advantage'] = 0
 
 
-def moyenne_domcile(data):
-    Équipe_domicile= {}
-
-    for i in data['HomeTeam'].unique():
-        Équipe_domicile[i] = 0
+def moyenne_domcile(data,dictionnaire,équipe,but):
+    for i in data[équipe].unique():
+        dictionnaire[i] = 0
     for y in range(len(data)):
-        for j in Équipe_domicile:
-            if data.loc[y,'HomeTeam'] == j:
-                Équipe_domicile[j] += int(data.loc[y,'HomeGoal'])
-    moyenne_buts_domicile = dict(sorted(Équipe_domicile.items()))
+        for j in dictionnaire:
+            if data.loc[y,équipe] == j:
+                dictionnaire[j] += int(data.loc[y,but])
+    moyenne_buts_domicile = dict(sorted(dictionnaire.items()))
     for moy in moyenne_buts_domicile:
         moyenne_buts_domicile[moy] = round(moyenne_buts_domicile[moy]/19,2)
     for k in range(len(data)):
         for nom_équipe in moyenne_buts_domicile:
-            if nom_équipe == data.loc[k,'HomeTeam']:
+            if nom_équipe == data.loc[k,équipe]:
                 data.loc[k,'moyenne_domcile_buts'] = moyenne_buts_domicile[nom_équipe]
     return moyenne_buts_domicile
 
+Équipe_domicile= {}
+Équipe_extérieur = {}
+print(moyenne_domcile(data_2324,Équipe_domicile,'HomeTeam','HomeGoal'))
+print(moyenne_domcile(data_2324,Équipe_extérieur,'AwayTeam','AwayGoal'))
+
 def moyenne_exterieru(data):
-    Équipe_extérieur = {}
     for i in data['AwayTeam'].unique():
         Équipe_extérieur[i] = 0
     for y in range(len(data)):
@@ -96,9 +98,30 @@ def moyenne_exterieru(data):
         moyenne_buts_extérieur[moy] = round(moyenne_buts_extérieur[moy]/19,2)
     for k in range(len(data)):
         for nom_équipe in moyenne_buts_extérieur:
-            if nom_équipe == data.loc[k,'HomeTeam']:
+            if nom_équipe == data.loc[k,'AwayTeam']:
                 data.loc[k,'moyenne_exterieur_buts'] = moyenne_buts_extérieur[nom_équipe]
     return moyenne_buts_extérieur
+
+#print(moyenne_exterieru(data_2324))
+
+
+
+moy_buts_conceder_dom = {}
+moy_buts_conceder_ext = {}
+for i in data_2324['HomeTeam'].unique():
+    moy_buts_conceder_dom[i] = 0
+    moy_buts_conceder_dom = dict(sorted(moy_buts_conceder_dom.items()))
+for y in range (len(data_2324)):
+    for k in moy_buts_conceder_dom:
+        if data_2324.loc[y,'HomeTeam'] == k:
+            moy_buts_conceder_dom[k] += int(data_2324.loc[y,'AwayGoal'])
+for moy in moy_buts_conceder_dom:
+    moy_buts_conceder_dom[moy] = round(moy_buts_conceder_dom[moy]/19,2)
+    
+for z in range(len(data_2324)):
+    for a in moy_buts_conceder_dom:
+        if data_2324.loc[z,'HomeTeam'] == a:
+            data_2324.loc[z,'ConcedeGoalHomeAvg'] = moy_buts_conceder_dom[a]
 
 
 def difference_buts(data, moyenne_dom, moyenne_ext):
@@ -127,26 +150,11 @@ data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ACorners', 'Away_avgCorner')
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 
-avantageDomicile(data_2324)
-difference_buts(data_2324,moyenne_domcile(data_2324),moyenne_exterieru(data_2324))
+#avantageDomicile(data_2324)
+#difference_buts(data_2324,moyenne_domcile(data_2324),moyenne_exterieru(data_2324))
 
 
-moy_buts_conceder_dom = {}
-moy_buts_conceder_ext = {}
-for i in data_2324['HomeTeam'].unique():
-    moy_buts_conceder_dom[i] = 0
-    moy_buts_conceder_dom = dict(sorted(moy_buts_conceder_dom.items()))
-for y in range (len(data_2324)):
-    for k in moy_buts_conceder_dom:
-        if data_2324.loc[y,'HomeTeam'] == k:
-            moy_buts_conceder_dom[k] += int(data_2324.loc[y,'AwayGoal'])
-for moy in moy_buts_conceder_dom:
-    moy_buts_conceder_dom[moy] = round(moy_buts_conceder_dom[moy]/19,2)
-    
-for z in range(len(data_2324)):
-    for a in moy_buts_conceder_dom:
-        if data_2324.loc[z,'HomeTeam'] == a:
-            data_2324.loc[z,'ConcedeGoalHomeAvg'] = moy_buts_conceder_dom[a]
+
     
 
     
@@ -154,8 +162,8 @@ for z in range(len(data_2324)):
 
 
 
-print(moy_buts_conceder_dom)
-print(data_2324)
+#print(moy_buts_conceder_dom)
+#print(data_2324)
 features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne']
 
