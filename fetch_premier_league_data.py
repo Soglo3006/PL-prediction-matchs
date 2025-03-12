@@ -130,7 +130,32 @@ data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_domcile(data_2324),moyenne_exterieru(data_2324))
 
-#print(data_2324)
+
+moy_buts_conceder_dom = {}
+moy_buts_conceder_ext = {}
+for i in data_2324['HomeTeam'].unique():
+    moy_buts_conceder_dom[i] = 0
+    moy_buts_conceder_dom = dict(sorted(moy_buts_conceder_dom.items()))
+for y in range (len(data_2324)):
+    for k in moy_buts_conceder_dom:
+        if data_2324.loc[y,'HomeTeam'] == k:
+            moy_buts_conceder_dom[k] += int(data_2324.loc[y,'AwayGoal'])
+for moy in moy_buts_conceder_dom:
+    moy_buts_conceder_dom[moy] = round(moy_buts_conceder_dom[moy]/19,2)
+    
+for z in range(len(data_2324)):
+    for a in moy_buts_conceder_dom:
+        if data_2324.loc[z,'HomeTeam'] == a:
+            data_2324.loc[z,'ConcedeGoalHomeAvg'] = moy_buts_conceder_dom[a]
+    
+
+    
+
+
+
+
+print(moy_buts_conceder_dom)
+print(data_2324)
 features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne']
 
@@ -140,6 +165,8 @@ y_home = data_2324['HomeGoal']
 y_away = data_2324['AwayGoal']
 
 
+
+""""
 # Séparation des données en jeu d'entraînement et de test
 X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
 W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
@@ -191,3 +218,4 @@ a_team = 'Newcastle'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
+"""
