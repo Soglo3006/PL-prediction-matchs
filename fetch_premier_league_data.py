@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import random
 
@@ -145,10 +145,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, ra
 W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
 
 # Entraînement du modèle
-model_home = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=1)
+model_home = RandomForestRegressor(n_estimators=100, min_samples_split=10, random_state=1)
 model_home.fit(X_train, y_train)
 
-model_away = RandomForestClassifier(n_estimators=100, min_samples_split=10, random_state=1)
+model_away = RandomForestRegressor(n_estimators=100, min_samples_split=10, random_state=1)
 model_away.fit(W_train,Z_train)
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
@@ -175,21 +175,19 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
                                     home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne]],
                                   columns=features)
     print(match_features)
-    prediction_buts_domicile = model_1.predict(match_features)[0]
-    prediction_buts_extérieur = model_2.predict(match_features)[0]
+    prediction_buts_domicile = round(model_1.predict(match_features)[0])
+    prediction_buts_extérieur = round(model_2.predict(match_features)[0])
     print(prediction_buts_domicile)
     print(prediction_buts_extérieur)
-    #if prediction == 'H':
-    #    return h_team
-    #elif prediction == 'A':
-    #    return a_team
-    #else:
-    #    return 'Draw'
+    if prediction_buts_domicile > prediction_buts_extérieur:
+        return {prediction_buts_domicile : prediction_buts_extérieur }
+    else:
+        return {prediction_buts_extérieur : prediction_buts_domicile }
     
 
 
-h_team = str(random.choice(data_2324['HomeTeam'].unique()))
-a_team = str(random.choice(data_2324['AwayTeam'].unique()))
+h_team = 'Arsenal'
+a_team = 'Newcastle'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
