@@ -32,3 +32,27 @@ Générer des prédictions et afficher les résultats
 7-Simulation de matchs
 Simuler plusieurs matchs entre équipes aléatoires
 Générer un classement basé sur les résultats simulés
+
+
+2eme partie : 
+ 2. Simuler les buteurs et les minutes des buts
+🔹 Pour chaque équipe, on doit savoir quels joueurs marquent souvent et à quelles minutes.
+🔹 Idéalement, on aurait besoin de données détaillées sur les buteurs.
+
+Solution :
+
+Récupérer les statistiques des joueurs (qui a marqué et à quelle minute).
+Générer des buteurs probables en fonction du nombre de buts par match.
+Assigner une minute de but aléatoire basée sur la distribution habituelle (ex: beaucoup de buts entre la 45e et 60e minute).
+
+3. Ajouter des statistiques avancées
+🔹 Possession, tirs, fautes, corners, cartons jaunes, passes réussies…
+🔹 Ces stats sont souvent corrélées avec le score final.
+
+Solution :
+
+Ajouter ces stats comme nouvelles features dans l’entraînement du modèle.
+Prédire ces valeurs en parallèle avec le score final.
+
+4. Créer l'interface
+

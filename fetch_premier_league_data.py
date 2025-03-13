@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import random
+import numpy as np
 
 # Charger les données depuis un fichier CSV
 data_2324 = pd.read_csv('season-2324.csv')
@@ -142,10 +143,8 @@ model_away.fit(W_train,Z_train)
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
     if h_team not in data['HomeTeam'].unique():
-        #print(f"Erreur : {home_team} n'existe pas dans les données !")
         return None
     if a_team not in data['AwayTeam'].unique():
-        #print(f"Erreur : {away_team} n'existe pas dans les données !")
         return None
     
     home_avg_goal = data[data['HomeTeam'] == h_team]['Home_avgGoal'].values[-1]
@@ -166,16 +165,16 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
                                     home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne,moyenne_conceder_dom, moyenne_conceder_ext]],
                                   columns=features)
     print(match_features)
-    prediction_buts_domicile = round(model_1.predict(match_features)[0])
-    prediction_buts_extérieur = round(model_2.predict(match_features)[0])
-    print(prediction_buts_domicile)
-    print(prediction_buts_extérieur)
-    if prediction_buts_domicile > prediction_buts_extérieur:
-        return {prediction_buts_domicile:prediction_buts_extérieur}
-    else:
-        return {prediction_buts_extérieur:prediction_buts_domicile}
+    prediction_buts_domicile = (model_1.predict(match_features)[0])
+    prediction_buts_extérieur = (model_2.predict(match_features)[0])
     
-
+    prediction_buts_domicile += np.random.normal(0, 0.7) 
+    prediction_buts_extérieur += np.random.normal(0, 0.7)
+    
+    prediction_buts_domicile = round(prediction_buts_domicile)
+    prediction_buts_extérieur = round(prediction_buts_extérieur)
+    
+    return {prediction_buts_domicile:prediction_buts_extérieur}
 
 h_team = 'Arsenal'
 a_team = 'Newcastle'
