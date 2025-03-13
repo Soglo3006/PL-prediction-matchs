@@ -4,6 +4,7 @@ from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 import random
 import numpy as np
+from xgboost import XGBRegressor
 
 # Charger les données depuis un fichier CSV
 data_2324 = pd.read_csv('season-2324.csv')
@@ -139,10 +140,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, ra
 W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
 
 # Entraînement du modèle
-model_home = RandomForestRegressor(n_estimators=100, min_samples_split=10, random_state=1)
+model_home = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=10, random_state=1)
 model_home.fit(X_train, y_train)
 
-model_away = RandomForestRegressor(n_estimators=100, min_samples_split=10, random_state=1)
+model_away = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=10, random_state=1)
 model_away.fit(W_train,Z_train)
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
@@ -184,10 +185,11 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     prediction_buts_domicile += np.random.normal(0, 0.7) 
     prediction_buts_extérieur += np.random.normal(0, 0.7)
     
-    prediction_buts_domicile = round(prediction_buts_domicile)
-    prediction_buts_extérieur = round(prediction_buts_extérieur)
+    prediction_buts_domicile = max(0,round(prediction_buts_domicile))
+    prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
     
-    return {prediction_buts_domicile:prediction_buts_extérieur}
+    return f"{h_team} {prediction_buts_domicile} - {prediction_buts_extérieur} {a_team}"
+
 
 h_team = 'Arsenal'
 a_team = 'Newcastle'
