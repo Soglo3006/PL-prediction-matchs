@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
 import random
 import numpy as np
 from xgboost import XGBRegressor
@@ -140,10 +140,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, ra
 W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
 
 # Entraînement du modèle
-model_home = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=10, random_state=1)
+model_home = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=1, random_state=1)
 model_home.fit(X_train, y_train)
 
-model_away = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=10, random_state=1)
+model_away = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=1, random_state=1)
 model_away.fit(W_train,Z_train)
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
@@ -191,8 +191,31 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     return f"{h_team} {prediction_buts_domicile} - {prediction_buts_extérieur} {a_team}"
 
 
-h_team = 'Arsenal'
-a_team = 'Newcastle'
+h_team = 'Luton'
+a_team = 'Man City'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
+    
+    
+
+# Prédictions sur les données de test
+y_pred_home = model_home.predict(X_test)
+y_pred_away = model_away.predict(W_test)
+
+# Évaluation du modèle pour les buts à domicile
+mae_home = mean_absolute_error(y_test, y_pred_home)
+r2_home = r2_score(y_test, y_pred_home)
+
+# Évaluation du modèle pour les buts à l'extérieur
+mae_away = mean_absolute_error(Z_test, y_pred_away)
+r2_away = r2_score(Z_test, y_pred_away)
+
+# Affichage des résultats
+print(" Évaluation du modèle - Buts domicile")
+print(f"MAE : {mae_home:.2f} (Erreur moyenne absolue)")
+print(f"R² : {r2_home:.2f} (Qualité de prédiction)")
+
+print("\n Évaluation du modèle - Buts extérieur")
+print(f"MAE : {mae_away:.2f} (Erreur moyenne absolue)")
+print(f"R² : {r2_away:.2f} (Qualité de prédiction)")
