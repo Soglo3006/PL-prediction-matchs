@@ -125,6 +125,10 @@ features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne', 
             'moyenne_conceder_dom', 'moyenne_conceder_ext']
 
+#h_features = ['Home_avgGoal','Home_avgShot', 'home_form', 'home_advantage','moyenne_domcile_buts','difference_moyenne', 'moyenne_conceder_dom']
+
+#a_features = ['Away_avgGoal','Away_avgShot','away_form','moyenne_exterieur_buts','difference_moyenne','moyenne_conceder_ext']
+
 
 X = data_2324[features]
 y_home = data_2324['HomeGoal']
@@ -164,7 +168,16 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     match_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,
                                     home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne,moyenne_conceder_dom, moyenne_conceder_ext]],
                                   columns=features)
+    """home_features = pd.DataFrame([[home_avg_goal,home_avg_shot,home_form, home_advantage,moyenne_domcile_buts,moyenne_conceder_dom,difference_moyenne]],
+                     columns = h_features)
+    
+    away_features = pd.DataFrame([[away_avg_goal,away_avg_shot,away_form,moyenne_extérieur_buts,moyenne_conceder_ext,difference_moyenne]],
+                     columns = a_features)
+    
+    print(home_features)
+    print(away_features)"""
     print(match_features)
+    
     prediction_buts_domicile = (model_1.predict(match_features)[0])
     prediction_buts_extérieur = (model_2.predict(match_features)[0])
     
