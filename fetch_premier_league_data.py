@@ -82,21 +82,23 @@ def moyenne_stats_buts(data,dictionnaire,équipe,but,newCol):
             if nom_équipe == data.loc[k,équipe]:
                 data.loc[k,newCol] = dictionnaire[nom_équipe]
     return dictionnaire
-def difference_buts(data, moyenne_dom, moyenne_ext):
+def difference_buts(data, moyenne_dom, moyenne_ext, newCol, newCol2):
     dom = moyenne_dom
     ext = moyenne_ext
     for i in range(len(data)):
         if dom[data.loc[i,'HomeTeam']]> ext[data.loc[i,'AwayTeam']] : 
-            data.loc[i,'difference_moyenne'] = dom[data.loc[i,'HomeTeam']] - ext[data.loc[i,'AwayTeam']]
-            data.loc[i,'difference_nom'] = data.loc[i,'HomeTeam']
+            data.loc[i,newCol] = dom[data.loc[i,'HomeTeam']] - ext[data.loc[i,'AwayTeam']]
+            data.loc[i,newCol2] = data.loc[i,'HomeTeam']
         else:
-            data.loc[i,'difference_moyenne'] = ext[data.loc[i,'AwayTeam']] - dom[data.loc[i,'HomeTeam']]
-            data.loc[i,'difference_nom'] = data.loc[i,'AwayTeam']
+            data.loc[i,newCol] = ext[data.loc[i,'AwayTeam']] - dom[data.loc[i,'HomeTeam']]
+            data.loc[i,newCol2] = data.loc[i,'AwayTeam']
 
 data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HomeGoal', 'Home_avgGoal')
 data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AwayGoal', 'Away_avgGoal')
 data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HomeShots', 'Home_avgShot')
 data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AwayShots', 'Away_avgShot')
+data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HomeShotTarget', 'Home_avgShot_Target')
+data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AwayShotTarget', 'Away_avgShot_Target')
 data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HCorners', 'Home_avgCorner')
 data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ACorners', 'Away_avgCorner')
 #data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HYellow', 'Home_avgYellow')
@@ -118,12 +120,13 @@ moyenne_con_but_dom = moyenne_stats_buts(data_2324,moy_buts_conceder_dom,'HomeTe
 moyenne_con_but_ext = moyenne_stats_buts(data_2324,moy_buts_conceder_ext,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
 avantageDomicile(data_2324)
-difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but)
+difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
+difference_buts(data_2324,moyenne_con_but_dom,moyenne_con_but_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
 
 #print(data_2324)
 
-features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot'
-            , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne', 
+features = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', 'Home_avgShot_Target','Away_avgShot_Target'
+            , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne_buts_marques','difference_moyenne_buts_conceder', 
             'moyenne_conceder_dom', 'moyenne_conceder_ext']
 
 #h_features = ['Home_avgGoal','Home_avgShot', 'home_form', 'home_advantage','moyenne_domcile_buts','difference_moyenne', 'moyenne_conceder_dom']
@@ -140,10 +143,10 @@ X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, ra
 W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
 
 # Entraînement du modèle
-model_home = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=1, random_state=1)
+model_home = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=5, random_state=1)
 model_home.fit(X_train, y_train)
 
-model_away = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=1, random_state=1)
+model_away = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=5, random_state=1)
 model_away.fit(W_train,Z_train)
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
@@ -156,6 +159,8 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     away_avg_goal = data[data['AwayTeam'] == a_team]['Away_avgGoal'].values[-1]
     home_avg_shot = data[data['HomeTeam'] == h_team]['Home_avgShot'].values[-1]
     away_avg_shot = data[data['AwayTeam'] == a_team]['Away_avgShot'].values[-1]
+    home_avg_shot_target = data[data['HomeTeam']== h_team]['Home_avgShot_Target'].values[-1]
+    away_avg_shot_target = data[data['AwayTeam']== a_team]['Away_avgShot_Target'].values[-1]
     home_form = data[data['HomeTeam'] == h_team]['home_form'].values[-1]
     away_form = data[data['AwayTeam'] == a_team]['away_form'].values[-1]
     home_advantage = data[data['HomeTeam'] == h_team]['home_advantage'].values[-1]
@@ -163,11 +168,13 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     moyenne_extérieur_buts = moyenne_ext_but[a_team]
     moyenne_conceder_dom = moyenne_con_but_dom[h_team]
     moyenne_conceder_ext = moyenne_con_but_ext[a_team]
-    difference_moyenne = moyenne_domcile_buts - moyenne_extérieur_buts
+    difference_moyenne_buts_marques = moyenne_domcile_buts - moyenne_extérieur_buts
+    difference_moyenne_buts_conceder = moyenne_conceder_dom - moyenne_conceder_ext
     
 
-    match_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,
-                                    home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne,moyenne_conceder_dom, moyenne_conceder_ext]],
+    match_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,home_avg_shot_target,away_avg_shot_target,
+                                    home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne_buts_marques,
+                                    difference_moyenne_buts_conceder, moyenne_conceder_dom, moyenne_conceder_ext]],
                                   columns=features)
     """home_features = pd.DataFrame([[home_avg_goal,home_avg_shot,home_form, home_advantage,moyenne_domcile_buts,moyenne_conceder_dom,difference_moyenne]],
                      columns = h_features)
