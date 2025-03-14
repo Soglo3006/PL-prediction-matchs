@@ -45,6 +45,33 @@ Récupérer les statistiques des joueurs (qui a marqué et à quelle minute).
 Générer des buteurs probables en fonction du nombre de buts par match.
 Assigner une minute de but aléatoire basée sur la distribution habituelle (ex: beaucoup de buts entre la 45e et 60e minute).
 
+ J'ai besoin des stats de chaque joueur :
+
+Nombre de buts marqués cette saison (goals_scored)
+Moyenne de buts par match
+Position sur le terrain (attaquant, milieu, défenseur)
+Joueurs qui tirent les penaltys et coups francs
+
+Comment simuler le buteur ?
+
+Méthode simple : Sélectionner un joueur aléatoirement en tenant compte des probabilités.
+Méthode avancée : Utiliser une distribution pondérée (random.choices())
+
+Attribuer un but à un joueur 🏆
+-Chaque joueur a une probabilité de marquer en fonction de ses buts cette saison.
+
+Les buts ne sont pas marqués de manière uniforme pendant un match.
+Exemple des tendances de buts en Premier League :
+
+0-15 min → 10% des buts
+15-30 min → 15%
+30-45 min → 20%
+45-60 min → 25%
+60-75 min → 20%
+75-90 min → 10%
+Comment simuler la minute ?
+Utiliser random.choices() pour tirer une minute en fonction de la probabilité d’apparition des buts.
+
 3. Ajouter des statistiques avancées
 🔹 Possession, tirs, fautes, corners, cartons jaunes, passes réussies…
 🔹 Ces stats sont souvent corrélées avec le score final.
