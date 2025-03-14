@@ -8,6 +8,7 @@ from xgboost import XGBRegressor
 
 # Charger les données depuis un fichier CSV
 data_2324 = pd.read_csv('season-2324.csv')
+data_2223 = pd.read_csv('season-2223.csv')
 
 
 data_2324['away_code'] = data_2324['AwayTeam'].astype("category").cat.codes
@@ -198,8 +199,26 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     return f"{h_team} {prediction_buts_domicile} - {prediction_buts_extérieur} {a_team}"
 
 
-h_team = 'Luton'
+h_team = 'Burnley'
 a_team = 'Man City'
+Historique_equipe = {(f"{h_team} - {a_team}"):0}
+score_confrontation = []
+for i in range(len(data_2324)):
+    if (data_2324.loc[i, 'HomeTeam'] == h_team and data_2324.loc[i,'AwayTeam'] == a_team) :
+        HomeGoal = data_2324.loc[i,'HomeGoal']
+        AwayGoal = data_2324.loc[i,'AwayGoal']
+        score_confrontation.append(f"{HomeGoal} - {AwayGoal}")
+    elif data_2324.loc[i, 'HomeTeam'] == a_team and data_2324.loc[i,'AwayTeam'] == h_team:
+        HomeGoal = data_2324.loc[i,'AwayGoal']
+        AwayGoal = data_2324.loc[i,'HomeGoal']
+        score_confrontation.append(f"{AwayGoal} - {HomeGoal}")
+        
+Historique_equipe[(f"{h_team} - {a_team}")] = score_confrontation
+
+print(Historique_equipe)
+"""
+h_team = 'Man City'
+a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
@@ -226,3 +245,4 @@ print(f"R² : {r2_home:.2f} (Qualité de prédiction)")
 print("\n Évaluation du modèle - Buts extérieur")
 print(f"MAE : {mae_away:.2f} (Erreur moyenne absolue)")
 print(f"R² : {r2_away:.2f} (Qualité de prédiction)")
+"""
