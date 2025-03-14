@@ -199,23 +199,7 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     return f"{h_team} {prediction_buts_domicile} - {prediction_buts_extérieur} {a_team}"
 
 
-h_team = 'Burnley'
-a_team = 'Man City'
-Historique_equipe = {(f"{h_team} - {a_team}"):0}
-score_confrontation = []
-for i in range(len(data_2324)):
-    if (data_2324.loc[i, 'HomeTeam'] == h_team and data_2324.loc[i,'AwayTeam'] == a_team) :
-        HomeGoal = data_2324.loc[i,'HomeGoal']
-        AwayGoal = data_2324.loc[i,'AwayGoal']
-        score_confrontation.append(f"{HomeGoal} - {AwayGoal}")
-    elif data_2324.loc[i, 'HomeTeam'] == a_team and data_2324.loc[i,'AwayTeam'] == h_team:
-        HomeGoal = data_2324.loc[i,'AwayGoal']
-        AwayGoal = data_2324.loc[i,'HomeGoal']
-        score_confrontation.append(f"{AwayGoal} - {HomeGoal}")
-        
-Historique_equipe[(f"{h_team} - {a_team}")] = score_confrontation
 
-print(Historique_equipe)
 """
 h_team = 'Man City'
 a_team = 'Luton'
