@@ -231,11 +231,3 @@ print(f"MAE : {mae_away:.2f} (Erreur moyenne absolue)")
 print(f"R² : {r2_away:.2f} (Qualité de prédiction)")
 """
 
-
-
-liste_équipe = []
-for i in data_2324['HomeTeam'].unique():
-    liste_équipe.append(i)
-    
-    
-print(liste_équipe)
