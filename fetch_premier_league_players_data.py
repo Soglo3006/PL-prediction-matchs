@@ -6,11 +6,14 @@ for i in range(len(data_joueur_stats)):
     data_joueur_stats.loc[i,'GoalsPerGames'] = round(data_joueur_stats.loc[i,'Gls']/data_joueur_stats.loc[i,'MP'],2)
     
 TakersPerTeam = {}
+FKTakersPerTeam = {'Manchester City': 'Kevin De Bruyne', 'Liverpool': 'Trent Alexander-Arnold', 'Arsenal': 'Martin Ødegaard', 'Chelsea': 'Cole Palmer', 
+                   'Newcastle ': 'Kieran Trippier', 'Tottenham ': 'James Maddison', 'Manchester United': 'Bruno Fernandes', 'Aston Villa': 'Lucas Digne', 
+                   'West Ham': 'James Ward-Prowse', 'Crystal Palace': 'Eberechi Eze', 'Fulham': 'Harry Wilson', 'Everton': 'Ashley Young',
+                   'Brighton': 'Danny Welbeck', 'Bournemouth': 'Justin Kluivert', 'Wolves': 'Pablo Sarabia', 'Brentford': 'Bryan Mbeumo', 
+                   'Nottingham Forest': 'Morgan Gibbs-White', 'Luton ': 'Alfie Doughty', 'Burnley': 'Josh Brownhill', 'Sheffield United': 'Gustavo Hamer'}
 
 for i in data_joueur_stats['Team'].unique():
     TakersPerTeam[i] ={'Pénalty':[]}
-    
-#print(TakersPerTeam)
     
 for j in range(len(data_joueur_stats)):
     for k in TakersPerTeam:
@@ -36,15 +39,14 @@ def find_top_scorer(data):
 
 top_scorers = find_top_scorer(TakersPerTeam)
 
-
-
-print(top_scorers)
 for j in range(len(data_joueur_stats)):
     if data_joueur_stats.loc[j,'Player'] in top_scorers.values():
         data_joueur_stats.loc[j,'PkTaker'] = 1
     else:
         data_joueur_stats.loc[j,'PkTaker'] = 0
-            
-
-
+        
+    if data_joueur_stats.loc[j,'Player'] in FKTakersPerTeam.values():
+        data_joueur_stats.loc[j,'FKTaker'] = 1
+    else:
+        data_joueur_stats.loc[j,'FKTaker'] = 0
 print(data_joueur_stats[0:21])
