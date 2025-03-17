@@ -22,7 +22,6 @@ for j in range(len(data_joueur_stats)):
 
 def find_top_scorer(data):
     top_scorers = {}
-    
     for team, stats in data.items():
         penalty_info = stats['Pénalty']
         top_player = penalty_info[0]  
@@ -33,11 +32,19 @@ def find_top_scorer(data):
         team_name = team
         player_name = list(top_player.keys())[0]
         top_scorers[team_name] = player_name
-    
     return top_scorers
 
 top_scorers = find_top_scorer(TakersPerTeam)
 
-print(top_scorers)
 
-#print(data_joueur_stats)
+
+print(top_scorers)
+for j in range(len(data_joueur_stats)):
+    if data_joueur_stats.loc[j,'Player'] in top_scorers.values():
+        data_joueur_stats.loc[j,'PkTaker'] = 1
+    else:
+        data_joueur_stats.loc[j,'PkTaker'] = 0
+            
+
+
+print(data_joueur_stats[0:21])
