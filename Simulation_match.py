@@ -4,19 +4,20 @@ from sklearn.ensemble import GradientBoostingRegressor
 import random
 import numpy as np
 import fetch_premier_league_data
+from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
-fetch_premier_league_data.avantageDomicile(fetch_premier_league_data.data_2324)
-fetch_premier_league_data.difference_buts(fetch_premier_league_data.data_2324,fetch_premier_league_data.moyenne_dom_but,fetch_premier_league_data.moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
-fetch_premier_league_data.difference_buts(fetch_premier_league_data.data_2324,fetch_premier_league_data.moyenne_con_but_dom,fetch_premier_league_data.moyenne_con_but_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
+avantageDomicile(data_2324)
+difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
+difference_buts(data_2324,moyenne_con_but_dom,moyenne_con_but_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
 
 features_match = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', 'Home_avgShot_Target','Away_avgShot_Target'
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne_buts_marques','difference_moyenne_buts_conceder', 
             'moyenne_conceder_dom', 'moyenne_conceder_ext']
 
-X = fetch_premier_league_data.data_2324[features_match]
-y_home = fetch_premier_league_data.data_2324['HomeGoal']
-y_away = fetch_premier_league_data.data_2324['AwayGoal']
+X = data_2324[features_match]
+y_home = data_2324['HomeGoal']
+y_away = data_2324['AwayGoal']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
 W_train, W_test, Z_train, Z_test = train_test_split(X, y_away, test_size=0.2, random_state=1)
@@ -42,10 +43,10 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     home_form = data[data['HomeTeam'] == h_team]['home_form'].values[-1]
     away_form = data[data['AwayTeam'] == a_team]['away_form'].values[-1]
     home_advantage = data[data['HomeTeam'] == h_team]['home_advantage'].values[-1]
-    moyenne_domcile_buts = fetch_premier_league_data.moyenne_dom_but[h_team]
-    moyenne_extérieur_buts = fetch_premier_league_data.moyenne_ext_but[a_team]
-    moyenne_conceder_dom = fetch_premier_league_data.moyenne_con_but_dom[h_team]
-    moyenne_conceder_ext = fetch_premier_league_data.moyenne_con_but_ext[a_team]
+    moyenne_domcile_buts = moyenne_dom_but[h_team]
+    moyenne_extérieur_buts = moyenne_ext_but[a_team]
+    moyenne_conceder_dom = moyenne_con_but_dom[h_team]
+    moyenne_conceder_ext = moyenne_con_but_ext[a_team]
     difference_moyenne_buts_marques = moyenne_domcile_buts - moyenne_extérieur_buts
     difference_moyenne_buts_conceder = moyenne_conceder_dom - moyenne_conceder_ext
     
@@ -66,10 +67,12 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
     
     ButeursHome = buteurs_Dans_Match(data_joueur_predictions_buteurs,h_team,prediction_buts_domicile)
+    ButeursAway = buteurs_Dans_Match(data_joueur_predictions_buteurs,a_team,prediction_buts_extérieur)
     
     return {
     "score": f"{prediction_buts_domicile} - {prediction_buts_extérieur}",
     "buteurs_home": ButeursHome,
+    "buteurs_away": ButeursAway
 }
 
 
@@ -96,7 +99,7 @@ def buteurs_Dans_Match(data2,team, Buts):
 h_team = 'Manchester City'
 a_team = 'Luton'
 if h_team != a_team:
-    predicted_result = predict_future_match(h_team, a_team, model_home, model_away, fetch_premier_league_data.data_2324,data_joueur_predictions_buteurs)
+    predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
     
 
