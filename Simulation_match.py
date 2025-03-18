@@ -27,7 +27,7 @@ model_home.fit(X_train, y_train)
 model_away = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=7, random_state=1)
 model_away.fit(W_train,Z_train)
 
-def predict_future_match(h_team, a_team, model_1, model_2, data, data2):
+def predict_future_match(h_team, a_team, model_1, model_2, data):
     if h_team not in data['HomeTeam'].unique():
         return None
     if a_team not in data['AwayTeam'].unique():
@@ -65,41 +65,38 @@ def predict_future_match(h_team, a_team, model_1, model_2, data, data2):
     prediction_buts_domicile = max(0,round(prediction_buts_domicile))
     prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
     
-    JoueurHomeTeam = []
-    JoueurAwayTeam = []
+    ButeursHome = buteurs_Dans_Match(data_joueur_predictions_buteurs,h_team,prediction_buts_domicile)
     
-    for i in range(len(data2)):
-        if data2.loc[i,'Team'] == h_team:
-            JoueurHomeTeam.append(data2.loc[i])
-        elif data2.loc[i,'Team'] == a_team:
-            JoueurAwayTeam.append(data2.loc[i])
-            
-    JoueurHomeTeam = sorted(JoueurHomeTeam, key=lambda x:x['Gls_90'], reverse=True)
-    JoueurAwayTeam = sorted(JoueurAwayTeam, key=lambda x:x['Gls_90'], reverse=True)
-    
-    listWeightHome = []
-    listWeightAway = []
-    for i in JoueurHomeTeam:
-        listWeightHome.append(float(i['Gls_90']))
-    for j in JoueurAwayTeam:
-        listWeightAway.append(float(j['Gls_90']))
-    
-    ButeurHome = random.choices(JoueurHomeTeam, weights= listWeightHome, k= prediction_buts_domicile)
-    for i in range(len(ButeurHome)):
-        ButeurHome[i] = ButeurHome[i]['Player']
+    return {
+    "score": f"{prediction_buts_domicile} - {prediction_buts_extérieur}",
+    "buteurs_home": ButeursHome,
+}
+
+
+
+def buteurs_Dans_Match(data2,team, Buts):
+    if Buts == 0:
+        return []
+    else:
+        JoueurTeam = []
+        for i in range(len(data2)):
+            if data2.loc[i,'Team'] == team:
+                JoueurTeam.append(data2.loc[i])
+        JoueurTeam = sorted(JoueurTeam, key=lambda x:x['Gls_90'], reverse=True)
+        listWeight = []
+        for i in JoueurTeam:
+            listWeight.append(float(i['Gls_90']))
+        Buteur = random.choices(JoueurTeam, weights= listWeight, k= Buts)
+        for i in range(len(Buteur)):
+            Buteur[i] = Buteur[i]['Player']
         
-        
-    ButeurAway = random.choices(JoueurAwayTeam, weights= listWeightAway, k= prediction_buts_extérieur)
-    for i in range(len(ButeurAway)):
-        ButeurAway[i] = ButeurAway[i]['Player']
+    return Buteur
     
-    return f"{h_team} {prediction_buts_domicile} - {prediction_buts_extérieur} {a_team}"
 
 h_team = 'Manchester City'
 a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, fetch_premier_league_data.data_2324,data_joueur_predictions_buteurs)
-    #print(data_joueur_predictions_buteurs)
     print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
     
 
