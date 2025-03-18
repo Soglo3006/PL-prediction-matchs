@@ -51,6 +51,21 @@ for j in range(len(data_joueur_stats)):
         data_joueur_stats.loc[j,'FKTaker'] = 1
     else:
         data_joueur_stats.loc[j,'FKTaker'] = 0
+        
+        
+Starting11EachTeam  = {}
+
+BenchPlayers = {}
+
+for i in data_joueur_stats['Team'].unique():
+    Starting11EachTeam[i] = data_joueur_stats[data_joueur_stats['Team']==i].head(11)
+    BenchPlayers[i] = data_joueur_stats[data_joueur_stats['Team'] == i ].tail(11)
+    
+    
+print(BenchPlayers)
+    
+#print(Starting11EachTeam)
+
 
 
 features_players = ['Player','Team','Pos','Gls','Ast','PkTaker','FKTaker','Gls_90','npxG','xG_90']
