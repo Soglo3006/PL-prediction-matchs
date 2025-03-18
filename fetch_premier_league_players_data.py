@@ -3,6 +3,9 @@ import pandas as pd
 data_joueur_stats = pd.read_csv('premier-player-23-24.csv')
 
 for i in range(len(data_joueur_stats)):
+    data_joueur_stats.loc[i,'Team'] = data_joueur_stats.loc[i,'Team'].strip()
+
+for i in range(len(data_joueur_stats)):
     data_joueur_stats.loc[i,'GoalsPerGames'] = round(data_joueur_stats.loc[i,'Gls']/data_joueur_stats.loc[i,'MP'],2)
     
 TakersPerTeam = {}
@@ -44,9 +47,11 @@ for j in range(len(data_joueur_stats)):
         data_joueur_stats.loc[j,'PkTaker'] = 1
     else:
         data_joueur_stats.loc[j,'PkTaker'] = 0
-        
     if data_joueur_stats.loc[j,'Player'] in FKTakersPerTeam.values():
         data_joueur_stats.loc[j,'FKTaker'] = 1
     else:
         data_joueur_stats.loc[j,'FKTaker'] = 0
-print(data_joueur_stats[0:21])
+
+
+features_players = ['Player','Team','Pos','Gls','Ast','PkTaker','FKTaker','Gls_90','npxG','xG_90']
+data_joueur_predictions_buteurs = data_joueur_stats[features_players]

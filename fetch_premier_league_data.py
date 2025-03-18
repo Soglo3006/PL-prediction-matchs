@@ -1,22 +1,7 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import mean_absolute_error, r2_score
-import random
-import numpy as np
-from xgboost import XGBRegressor
 
-# Charger les données depuis un fichier CSV
 data_2324 = pd.read_csv('season-2324.csv')
 data_2223 = pd.read_csv('season-2223.csv')
-
-
-data_2324['away_code'] = data_2324['AwayTeam'].astype("category").cat.codes
-
-data_2324['home_code'] = data_2324['HomeTeam'].astype("category").cat.codes
-
-data_2324['goal_diff'] = data_2324['HomeGoal'] - data_2324['AwayGoal']
-
 def moyenne_Stats(data, team_col, stat_col, new_col):
     data[new_col] = 0.0
     grouped = data.groupby(team_col)
@@ -26,9 +11,6 @@ def moyenne_Stats(data, team_col, stat_col, new_col):
             window = team_matches.iloc[derniersMatchs:i+1][stat_col]
             data.loc[team_matches.index[i], new_col] = float(window.mean()) 
     return data
-
-# ligne et colonne
-# row and column
 
 def calculate_form(data, team_col, result_col, new_col):
     form_list = []
