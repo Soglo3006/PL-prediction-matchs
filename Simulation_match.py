@@ -74,8 +74,6 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     "buteurs_away": ButeursAway
 }
 
-
-
 def buteurs_Dans_Match(data2,team, Buts):
     if Buts == 0:
         return []

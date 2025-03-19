@@ -58,13 +58,9 @@ Starting11EachTeam  = {}
 BenchPlayers = {}
 
 for i in data_joueur_stats['Team'].unique():
-    Starting11EachTeam[i] = data_joueur_stats[data_joueur_stats['Team']==i].head(11)
-    BenchPlayers[i] = data_joueur_stats[data_joueur_stats['Team'] == i ].tail(11)
-    
-    
-print(BenchPlayers)
-    
-#print(Starting11EachTeam)
+    Starting11EachTeam[i] = data_joueur_stats[data_joueur_stats['Team']==i].sort_values(by = ['MP'], ascending =False).head(11)
+    BenchPlayers[i] = data_joueur_stats[data_joueur_stats['Team'] == i ].sort_values(by = ['MP'], ascending =False).tail(len(data_joueur_stats[data_joueur_stats['Team'] == i ])- len(Starting11EachTeam[i]))
+
 
 
 
