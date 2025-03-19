@@ -54,22 +54,22 @@ def valeur_takers(data):
             data.loc[j,'FKTaker'] = 0
             
 valeur_takers(data_joueur_stats)
-        
-        
-Starting11EachTeam  = {}
-BenchPlayers = {}
-dataJoueur = {}
 
-for i in data_joueur_stats['Team'].unique():
-    Starting11EachTeam[i] = data_joueur_stats[data_joueur_stats['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11)
-    BenchPlayers[i] = data_joueur_stats[data_joueur_stats['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data_joueur_stats[data_joueur_stats['Team'] == i ])- len(Starting11EachTeam[i]))
+def data_team_effectif(data):
+    Starting11EachTeam  = {}
+    BenchPlayers = {}
+    dataJoueur = {}
+    for i in data['Team'].unique():
+        Starting11EachTeam[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11)
+        BenchPlayers[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(Starting11EachTeam[i]))
 
-features_players = ['Player','Team','Pos','Gls','Ast','PkTaker','FKTaker','Gls_90','npxG','xG_90']
-for i in data_joueur_stats['Team'].unique():
-    dataJoueur[i] = {
-        'Starting11Players' : Starting11EachTeam[i][features_players],
-        'BenchPlayers' : BenchPlayers[i][features_players]
-    }
+    features_players = ['Player','Team','Pos','Gls','Ast','PkTaker','FKTaker','Gls_90','npxG','xG_90']
+    for i in data['Team'].unique():
+        dataJoueur[i] = {
+            'Starting11Players' : Starting11EachTeam[i][features_players],
+            'BenchPlayers' : BenchPlayers[i][features_players]
+        }
+    return dataJoueur
 
-
-data_joueur_predictions_buteurs = data_joueur_stats[features_players]
+print(data_team_effectif(data_joueur_stats))
+#data_joueur_predictions_buteurs = data_joueur_stats[features_players]
