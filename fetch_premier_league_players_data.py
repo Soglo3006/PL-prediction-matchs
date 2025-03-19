@@ -7,24 +7,26 @@ for i in range(len(data_joueur_stats)):
 
 for i in range(len(data_joueur_stats)):
     data_joueur_stats.loc[i,'GoalsPerGames'] = round(data_joueur_stats.loc[i,'Gls']/data_joueur_stats.loc[i,'MP'],2)
-    
-TakersPerTeam = {}
+
 FKTakersPerTeam = {'Manchester City': 'Kevin De Bruyne', 'Liverpool': 'Trent Alexander-Arnold', 'Arsenal': 'Martin Ødegaard', 'Chelsea': 'Cole Palmer', 
                    'Newcastle ': 'Kieran Trippier', 'Tottenham ': 'James Maddison', 'Manchester United': 'Bruno Fernandes', 'Aston Villa': 'Lucas Digne', 
                    'West Ham': 'James Ward-Prowse', 'Crystal Palace': 'Eberechi Eze', 'Fulham': 'Harry Wilson', 'Everton': 'Ashley Young',
                    'Brighton': 'Danny Welbeck', 'Bournemouth': 'Justin Kluivert', 'Wolves': 'Pablo Sarabia', 'Brentford': 'Bryan Mbeumo', 
                    'Nottingham Forest': 'Morgan Gibbs-White', 'Luton ': 'Alfie Doughty', 'Burnley': 'Josh Brownhill', 'Sheffield United': 'Gustavo Hamer'}
 
-for i in data_joueur_stats['Team'].unique():
-    TakersPerTeam[i] ={'Pénalty':[]}
-    
-for j in range(len(data_joueur_stats)):
-    for k in TakersPerTeam:
-        if data_joueur_stats.loc[j,'Team'] ==k:
-            if data_joueur_stats.loc[j,'PKatt'] > 0:
-                penalty_goals = data_joueur_stats.loc[j, 'PK']
-                player_name = data_joueur_stats.loc[j, 'Player']
+
+def penalty_taker(data):
+    TakersPerTeam = {}
+    for i in data['Team'].unique():
+        TakersPerTeam[i] ={'Pénalty':[]}
+        
+    for j in range(len(data)):
+        for k in TakersPerTeam:
+            if data.loc[j,'Team'] ==k and data.loc[j,'PKatt'] > 0:
+                penalty_goals = data.loc[j, 'PK']
+                player_name = data.loc[j, 'Player']
                 TakersPerTeam[k]['Pénalty'].append({player_name: int(penalty_goals)})
+    return TakersPerTeam
 
 def find_top_scorer(data):
     top_scorers = {}
@@ -40,7 +42,7 @@ def find_top_scorer(data):
         top_scorers[team_name] = player_name
     return top_scorers
 
-top_scorers = find_top_scorer(TakersPerTeam)
+top_scorers = find_top_scorer(penalty_taker(data_joueur_stats))
 
 for j in range(len(data_joueur_stats)):
     if data_joueur_stats.loc[j,'Player'] in top_scorers.values():
@@ -54,15 +56,19 @@ for j in range(len(data_joueur_stats)):
         
         
 Starting11EachTeam  = {}
-
 BenchPlayers = {}
+dataJoueur = {}
 
 for i in data_joueur_stats['Team'].unique():
-    Starting11EachTeam[i] = data_joueur_stats[data_joueur_stats['Team']==i].sort_values(by = ['MP'], ascending =False).head(11)
-    BenchPlayers[i] = data_joueur_stats[data_joueur_stats['Team'] == i ].sort_values(by = ['MP'], ascending =False).tail(len(data_joueur_stats[data_joueur_stats['Team'] == i ])- len(Starting11EachTeam[i]))
-
-
-
+    Starting11EachTeam[i] = data_joueur_stats[data_joueur_stats['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11)
+    BenchPlayers[i] = data_joueur_stats[data_joueur_stats['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data_joueur_stats[data_joueur_stats['Team'] == i ])- len(Starting11EachTeam[i]))
 
 features_players = ['Player','Team','Pos','Gls','Ast','PkTaker','FKTaker','Gls_90','npxG','xG_90']
+for i in data_joueur_stats['Team'].unique():
+    dataJoueur[i] = {
+        'Starting11Players' : Starting11EachTeam[i][features_players],
+        'BenchPlayers' : BenchPlayers[i][features_players]
+    }
+
+
 data_joueur_predictions_buteurs = data_joueur_stats[features_players]
