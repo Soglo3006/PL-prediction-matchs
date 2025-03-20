@@ -79,17 +79,16 @@ def buteurs_Dans_Match(data2,team, Buts):
         return []
     else:
         JoueurTeam = []
-        if team == h_team:
-            for i in range(len(data2[team]['Starting11Players'])):
-                if data2[team]['Starting11Players'].loc[i,'Team'] == team:
-                    JoueurTeam.append(data2[team]['Starting11Players'].iloc[i])
+        for i in range(len(data2[team]['Starting11Players'])):
+            if data2[team]['Starting11Players'].loc[i,'Team'] == team:
+                JoueurTeam.append(data2[team]['Starting11Players'].iloc[i])
         JoueurTeam = sorted(JoueurTeam, key=lambda x:x['Gls_90'], reverse=True)
         listWeight = []
-        for i in JoueurTeam:
-            listWeight.append(float(i['Gls_90']))
+        for j in JoueurTeam:
+            listWeight.append(float(j['Gls_90']))
         Buteur = random.choices(JoueurTeam, weights= listWeight, k= Buts)
-        for i in range(len(Buteur)):
-            Buteur[i] = Buteur[i]['Player']
+        for z in range(len(Buteur)):
+            Buteur[z] = Buteur[z]['Player']
         
     return Buteur
 
@@ -97,7 +96,8 @@ h_team = 'Manchester City'
 a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
-    print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
+    #print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
+    print(predicted_result)
     
 
     
