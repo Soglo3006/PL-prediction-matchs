@@ -27,4 +27,6 @@ def buts_minutes(butsEquipe):
         a,b = random.choices(minutes,weights= probMinutes)[0]
         minutes_set.add(random.randint(a,b))
     ButsMinutesEquipe = sorted(minutes_set)
-    return ButsMinutesEquipe
+    for i in range (len(butsEquipe)):
+        butsEquipe[i] = {butsEquipe[i] : ButsMinutesEquipe[i]}
+    return butsEquipe

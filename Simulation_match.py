@@ -74,10 +74,8 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     
     return {
     "score": f"{prediction_buts_domicile} - {prediction_buts_extérieur}",
-    "buteurs_home": ButeursHome ,
-    "buteurs_away": ButeursAway,
-    "buts_minutes_home": ButsMinutesHome,
-    "buts_minutes_away": ButsMinutesAway,
+    "buteurs_home": ButsMinutesHome ,
+    "buteurs_away": ButsMinutesAway,
 }
         
 
