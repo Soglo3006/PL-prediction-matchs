@@ -92,12 +92,25 @@ def buteurs_Dans_Match(data2,team, Buts):
         
     return Buteur
 
+ButeursHome = buteurs_Dans_Match(data_joueur_predictions_buteurs,'Luton',3)
+print(ButeursHome)
+Minutes = [ (0,15), (15,30),(30,45),(45,60),(60,75),(75,90)]
+Prob_minutes = [0.10,0.15,0.20,0.25,0.20,0.10]
+minutes_set = set()
+while len(minutes_set) < len(ButeursHome):
+    a,b = random.choices(Minutes,weights= Prob_minutes)[0]
+    minutes_set.add(random.randint(a,b))
+
+#Buts_Minutes_Away = random.choices(Minutes,weights= Prob_minutes, k= len(ButeursHome))
+Buts_Minutes_Away = sorted(minutes_set)
+print(Buts_Minutes_Away)
+        
+
 h_team = 'Manchester City'
 a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
     #print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
-    print(predicted_result)
     
 
     
