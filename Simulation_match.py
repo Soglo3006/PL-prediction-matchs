@@ -1,10 +1,11 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
-import random
 import numpy as np
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
+from buts_match_equipe import buteurs_Dans_Match, buts_minutes
+
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
@@ -78,35 +79,6 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     "buts_minutes_home": ButsMinutesHome,
     "buts_minutes_away": ButsMinutesAway,
 }
-
-def buteurs_Dans_Match(data2,team, Buts):
-    if Buts == 0:
-        return []
-    else:
-        JoueurTeam = []
-        for i in range(len(data2[team]['Starting11Players'])):
-            if data2[team]['Starting11Players'].loc[i,'Team'] == team:
-                JoueurTeam.append(data2[team]['Starting11Players'].iloc[i])
-        JoueurTeam = sorted(JoueurTeam, key=lambda x:x['Gls_90'], reverse=True)
-        listWeight = []
-        for j in JoueurTeam:
-            listWeight.append(float(j['Gls_90']))
-        Buteur = random.choices(JoueurTeam, weights= listWeight, k= Buts)
-        for z in range(len(Buteur)):
-            Buteur[z] = Buteur[z]['Player']
-        
-    return Buteur
-
-
-def buts_minutes(butsEquipe):
-    minutes = [ (0,15), (15,30),(30,45),(45,60),(60,75),(75,90)]
-    probMinutes = [0.10,0.15,0.20,0.25,0.20,0.10]
-    minutes_set = set()
-    while len(minutes_set) < len(butsEquipe):
-        a,b = random.choices(minutes,weights= probMinutes)[0]
-        minutes_set.add(random.randint(a,b))
-    ButsMinutesEquipe = sorted(minutes_set)
-    return ButsMinutesEquipe
         
 
 h_team = 'Manchester City'
