@@ -60,8 +60,8 @@ def data_team_effectif(data):
     BenchPlayers = {}
     dataJoueur = {}
     for i in data['Team'].unique():
-        Starting11EachTeam[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11)
-        BenchPlayers[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(Starting11EachTeam[i]))
+        Starting11EachTeam[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
+        BenchPlayers[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(Starting11EachTeam[i])).reset_index(drop=True)
 
     features_players = ['Player','Team','Pos','Gls','Ast','PkTaker','FKTaker','Gls_90','npxG','xG_90']
     for i in data['Team'].unique():
@@ -71,5 +71,7 @@ def data_team_effectif(data):
         }
     return dataJoueur
 
-print(data_team_effectif(data_joueur_stats))
-#data_joueur_predictions_buteurs = data_joueur_stats[features_players]
+data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
+
+#print(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])
+

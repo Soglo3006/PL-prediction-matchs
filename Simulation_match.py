@@ -79,9 +79,10 @@ def buteurs_Dans_Match(data2,team, Buts):
         return []
     else:
         JoueurTeam = []
-        for i in range(len(data2)):
-            if data2.loc[i,'Team'] == team:
-                JoueurTeam.append(data2.loc[i])
+        if team == h_team:
+            for i in range(len(data2[team]['Starting11Players'])):
+                if data2[team]['Starting11Players'].loc[i,'Team'] == team:
+                    JoueurTeam.append(data2[team]['Starting11Players'].iloc[i])
         JoueurTeam = sorted(JoueurTeam, key=lambda x:x['Gls_90'], reverse=True)
         listWeight = []
         for i in JoueurTeam:
@@ -91,7 +92,6 @@ def buteurs_Dans_Match(data2,team, Buts):
             Buteur[i] = Buteur[i]['Player']
         
     return Buteur
-    
 
 h_team = 'Manchester City'
 a_team = 'Luton'
