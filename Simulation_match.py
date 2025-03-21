@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
 import numpy as np
+import random
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 from buts_match_equipe import buteurs_Dans_Match, buts_minutes
@@ -77,13 +78,14 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     "buteurs_home": ButsMinutesHome ,
     "buteurs_away": ButsMinutesAway,
 }
-        
+
+
 
 h_team = 'Manchester City'
 a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
-    print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
+    #print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
     
 
     
