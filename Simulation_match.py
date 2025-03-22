@@ -83,7 +83,7 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
 
 
 
-h_team = 'Manchester City'
+h_team = 'Liverpool'
 a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
