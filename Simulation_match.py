@@ -3,10 +3,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestClassifier
 import numpy as np
 import simpy 
-import random
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
-from fetch_premier_league_players_data import data_joueur_predictions_buteurs
-from buts_match_equipe import buteurs_Dans_Match, buts_minutes
+from détails_simulation import match_process
 
 
 avantageDomicile(data_2324)
@@ -71,16 +69,16 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     prediction_buts_domicile = max(0,round(prediction_buts_domicile))
     prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
     
-    ButeursHome = buteurs_Dans_Match(data_joueur_predictions_buteurs,h_team,prediction_buts_domicile)
-    ButeursAway = buteurs_Dans_Match(data_joueur_predictions_buteurs,a_team,prediction_buts_extérieur)
-    
-    #ButsMinutesHome = buts_minutes(ButeursHome)
-    #ButsMinutesAway = buts_minutes(ButeursAway)
+    env = simpy.Environment()
+    match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur))
+
+    env.run()
+    buteurs_home, buteurs_away = match_result.value
     
     return {
     "score": f"{prediction_buts_domicile} - {prediction_buts_extérieur}",
-    #"buteurs_home": ButsMinutesHome ,
-    #"buteurs_away": ButsMinutesAway,
+    "buteurs_home": buteurs_home ,
+    "buteurs_away": buteurs_away,
 }
 
 
