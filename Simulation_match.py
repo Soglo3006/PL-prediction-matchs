@@ -19,16 +19,17 @@ features_possesion =['Home_avgGoal','Away_avgGoal','Away_avgShot', 'Home_avgShot
                      'home_form','difference_moyenne_buts_conceder','moyenne_conceder_dom', 'moyenne_conceder_ext']
 
 
-def train_goal_models(data, features, teamGoal, model_type=GradientBoostingRegressor):
+def train_goal_models(data, features, teamGoal, model_type=RandomForestClassifier):
     X = data[features]
     y_home = data[teamGoal]
     X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
-    model = model_type(n_estimators=500, learning_rate=0.1, max_depth=7, random_state=1)
+    model = model_type(n_estimators=500, max_depth=7, random_state=1)
     model.fit(X_train, y_train)
 
     return model
 
 model_home = train_goal_models(data_2324, features_match, 'HomeGoal')
+
 model_away = train_goal_models(data_2324, features_match, 'AwayGoal')
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
@@ -83,7 +84,7 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
 
 
 
-h_team = 'Liverpool'
+h_team = 'Manchester City'
 a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)

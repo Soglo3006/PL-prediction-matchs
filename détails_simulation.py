@@ -38,3 +38,5 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
     buteurs_home = sorted(buteurs_home,key =lambda x:x[1])
     buteurs_away = sorted(buteurs_away,key = lambda x:x[1])
     return buteurs_home, buteurs_away
+
+#Ajoute de remplacant dans la simulation
