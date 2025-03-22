@@ -2,11 +2,14 @@ import pandas as pd
 
 data_joueur_stats = pd.read_csv('premier-player-23-24.csv')
 
-for i in range(len(data_joueur_stats)):
-    data_joueur_stats.loc[i,'Team'] = data_joueur_stats.loc[i,'Team'].strip()
+data_joueur_stats['PlayerID'] = data_joueur_stats['Player'].astype("category").cat.codes
+data_joueur_stats['TeamID'] = data_joueur_stats['Team'].astype("category").cat.codes
 
 for i in range(len(data_joueur_stats)):
+    data_joueur_stats.loc[i,'Team'] = data_joueur_stats.loc[i,'Team'].strip()
     data_joueur_stats.loc[i,'GoalsPerGames'] = round(data_joueur_stats.loc[i,'Gls']/data_joueur_stats.loc[i,'MP'],2)
+    data_joueur_stats.loc[i,'Buts'] = 0
+
 
 def penalty_taker(data):
     TakersPerTeam = {}
@@ -63,7 +66,7 @@ def data_team_effectif(data):
         Starting11EachTeam[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
         BenchPlayers[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(Starting11EachTeam[i])).reset_index(drop=True)
 
-    features_players = ['Player','Team','Pos','Gls','Ast','PkTaker','FKTaker','Gls_90','npxG','xG_90']
+    features_players = ['Player','Team','Pos','PkTaker','FKTaker','Gls_90','xG_90','xAG_90','GoalsPerGames','Buts','PlayerID','TeamID']
     for i in data['Team'].unique():
         dataJoueur[i] = {
             'Starting11Players' : Starting11EachTeam[i][features_players],
@@ -73,3 +76,5 @@ def data_team_effectif(data):
 
 data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
 
+
+#print(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])
