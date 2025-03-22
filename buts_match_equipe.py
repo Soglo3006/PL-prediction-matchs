@@ -17,16 +17,3 @@ def buteurs_Dans_Match(data2,team, Buts):
             Buteur[z] = Buteur[z]['Player']
         
     return Buteur
-
-
-def buts_minutes(butsEquipe):
-    minutes = [ (0,15), (15,30),(30,45),(45,60),(60,75),(75,90)]
-    probMinutes = [0.10,0.15,0.20,0.25,0.20,0.10]
-    minutes_set = set()
-    while len(minutes_set) < len(butsEquipe):
-        a,b = random.choices(minutes,weights= probMinutes)[0]
-        minutes_set.add(random.randint(a,b))
-    ButsMinutesEquipe = sorted(minutes_set)
-    for i in range (len(butsEquipe)):
-        butsEquipe[i] = {butsEquipe[i] : ButsMinutesEquipe[i]}
-    return butsEquipe
