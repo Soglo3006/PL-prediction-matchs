@@ -17,7 +17,7 @@ features_match = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', '
 
 
 
-def train_goal_models(data, features, teamGoal, model_type=RandomForestClassifier):
+def train_goal_models(data, features, teamGoal, model_type):
     X = data[features]
     y_home = data[teamGoal]
     X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
@@ -26,9 +26,9 @@ def train_goal_models(data, features, teamGoal, model_type=RandomForestClassifie
 
     return model
 
-model_home = train_goal_models(data_2324, features_match, 'HomeGoal')
+model_home = train_goal_models(data_2324, features_match, 'HomeGoal',RandomForestClassifier)
 
-model_away = train_goal_models(data_2324, features_match, 'AwayGoal')
+model_away = train_goal_models(data_2324, features_match, 'AwayGoal',RandomForestClassifier)
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
     if h_team not in data['HomeTeam'].unique():
