@@ -87,6 +87,16 @@ def difference_buts(data, moyenne_dom, moyenne_ext, newCol, newCol2):
         else:
             data.loc[i,newCol] = ext[data.loc[i,'AwayTeam']] - dom[data.loc[i,'HomeTeam']]
             data.loc[i,newCol2] = data.loc[i,'AwayTeam']
+            
+def possesion(data,h_team,a_team,newCol1,newCol2):
+    for i in range(len(data)):
+        for j in data[h_team].unique():
+            if data.loc[i,h_team] ==j:
+                data.loc[i,newCol1] = 0.50
+            elif data.loc[i,a_team] == j:
+                data.loc[i,newCol2] = 0.50
+                
+                
 
 #data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HYellow', 'Home_avgYellow')
 #data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AYellow', 'Away_avgYellow')
@@ -107,5 +117,4 @@ moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_ex
 moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
 moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
-
-
+possesion(data_2324,'HomeTeam','AwayTeam','HomePossession','AwayPossession')

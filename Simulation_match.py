@@ -15,8 +15,6 @@ features_match = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', '
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne_buts_marques','difference_moyenne_buts_conceder', 
             'moyenne_conceder_dom', 'moyenne_conceder_ext']
 
-features_possesion =['Home_avgGoal','Away_avgGoal','Away_avgShot', 'Home_avgShot_Target','Away_avgShot_Target',
-                     'home_form','difference_moyenne_buts_conceder','moyenne_conceder_dom', 'moyenne_conceder_ext']
 
 
 def train_goal_models(data, features, teamGoal, model_type=RandomForestClassifier):
@@ -76,11 +74,7 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     env.run()
     buteurs_home, buteurs_away = match_result.value
     
-    return {
-    "score": f"{prediction_buts_domicile} - {prediction_buts_extérieur}",
-    "buteurs_home": buteurs_home ,
-    "buteurs_away": buteurs_away,
-}
+    return prediction_buts_domicile,prediction_buts_extérieur,buteurs_home,buteurs_away
 
 
 
@@ -88,8 +82,14 @@ h_team = 'Manchester City'
 a_team = 'Luton'
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away, data_2324)
-    print(f"Prédiction pour {h_team} vs {a_team} : {predicted_result}")
+    prediction_buts_domicile,prediction_buts_extérieur,buteurs_home,buteurs_away = predicted_result
+    prediction = {
+            "score": f"{prediction_buts_domicile} - {prediction_buts_extérieur}",
+            "buteurs_home": buteurs_home,
+            "buteurs_away": buteurs_away
+        }    
     
+    print(f"Prédiction pour {h_team} vs {a_team} : {prediction}")
 
 """
 # Prédictions sur les données de test
