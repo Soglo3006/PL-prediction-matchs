@@ -18,18 +18,18 @@ features_match = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', '
 features_possesion =['Home_avgGoal','Away_avgGoal','Away_avgShot', 'Home_avgShot_Target','Away_avgShot_Target',
                      'home_form','difference_moyenne_buts_conceder','moyenne_conceder_dom', 'moyenne_conceder_ext']
 
-x_features_match = data_2324[features_match]
-y_home = data_2324['HomeGoal']
-y_away = data_2324['AwayGoal']
 
-X_train, X_test, y_train, y_test = train_test_split(x_features_match, y_home, test_size=0.2, random_state=1)
-W_train, W_test, Z_train, Z_test = train_test_split(x_features_match, y_away, test_size=0.2, random_state=1)
+def train_goal_models(data, features, teamGoal, model_type=GradientBoostingRegressor):
+    X = data[features]
+    y_home = data[teamGoal]
+    X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
+    model = model_type(n_estimators=500, learning_rate=0.1, max_depth=7, random_state=1)
+    model.fit(X_train, y_train)
 
-model_home = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=7, random_state=1)
-model_home.fit(X_train, y_train)
+    return model
 
-model_away = GradientBoostingRegressor(n_estimators=500, learning_rate=0.1, max_depth=7, random_state=1)
-model_away.fit(W_train,Z_train) 
+model_home = train_goal_models(data_2324, features_match, 'HomeGoal')
+model_away = train_goal_models(data_2324, features_match, 'AwayGoal')
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
     if h_team not in data['HomeTeam'].unique():
