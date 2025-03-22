@@ -2,6 +2,27 @@ import pandas as pd
 
 data_2324 = pd.read_csv('season-2324.csv')
 data_2223 = pd.read_csv('season-2223.csv')
+
+def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol ):
+    equipe = {}
+    for i in data[h_team].unique():
+        equipe[i] = 0 
+        equipe = dict(sorted(equipe.items()))
+    for y in range(len(data)):
+        for j in equipe:
+            if data.loc[y,h_team] == j :
+                equipe[j] += int(data.loc[y,h_categore])
+            elif data.loc[y,a_team] == j:
+                equipe[j] += int(data.loc[y,a_categorie])
+    for k in equipe:
+        equipe[k] = round(equipe[k]/38,2)
+    for z in range(len(data)):
+        for a in equipe:
+            if a == data.loc[z,h_team]:
+                data.loc[z,h_newCol] = equipe[a]
+            elif a == data.loc[z,a_team]:
+                data.loc[z,a_newCol] = equipe[a]
+    return equipe
 def calculate_form(data, team_col, result_col, new_col):
     form_list = []
     for i in range(len(data)):
@@ -67,22 +88,18 @@ def difference_buts(data, moyenne_dom, moyenne_ext, newCol, newCol2):
             data.loc[i,newCol] = ext[data.loc[i,'AwayTeam']] - dom[data.loc[i,'HomeTeam']]
             data.loc[i,newCol2] = data.loc[i,'AwayTeam']
 
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HomeGoal', 'Home_avgGoal')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AwayGoal', 'Away_avgGoal')
-# = moyenne_Stats(data_2324, 'HomeTeam','HomeShots', 'Home_avgShot')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AwayShots', 'Away_avgShot')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HomeShotTarget', 'Home_avgShot_Target')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AwayShotTarget', 'Away_avgShot_Target')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HCorners', 'Home_avgCorner')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ACorners', 'Away_avgCorner')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HYellow', 'Home_avgYellow')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AYellow', 'Away_avgYellow')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HRed', 'Home_avgRed')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ARed', 'Away_avgRed')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HFouls','Home_avgFouls')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AFouls','Away_avgFouls')
-#data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
-#data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','AvgGoalDuringSeasonHT','AvgGoalDuringSeasonAT')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','HomeShotsAvg','AwayShotsAvg')
+
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShotTarget','AwayShotTarget','Home_avgShot_Target','Away_avgShot_Target')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HCorners','ACorners','Home_avgCorner','Away_avgCorner')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HYellow','AYellow','Home_avgYellow','Away_avgYellow')
+
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HRed','ARed','Home_avgRed','Away_avgRed')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HFouls','AFouls','Home_avgFouls','Away_avgFouls')
+
+data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
+data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 
 moyenne_dom_but = moyenne_stats_buts(data_2324,'HomeTeam','HomeGoal','moyenne_domcile_buts')
 moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_exterieur_buts')
@@ -91,25 +108,4 @@ moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenn
 
 #print(data_2324[0:50])
 
-def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol ):
-    equipe = {}
-    for i in data[h_team].unique():
-        equipe[i] = 0 
-        equipe = dict(sorted(equipe.items()))
-    for y in range(len(data)):
-        for j in equipe:
-            if data.loc[y,h_team] == j :
-                equipe[j] += int(data.loc[y,h_categore])
-            elif data.loc[y,a_team] == j:
-                equipe[j] += int(data.loc[y,a_categorie])
-    for k in equipe:
-        equipe[k] = round(equipe[k]/38,2)
-    for z in range(len(data)):
-        for a in equipe:
-            if a == data.loc[z,h_team]:
-                data.loc[z,h_newCol] = equipe[a]
-            elif a == data.loc[z,a_team]:
-                data.loc[z,a_newCol] = equipe[a]
-    return equipe
 
-#print(moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','HomeShotsAvg','AwayShotsAvg'))
