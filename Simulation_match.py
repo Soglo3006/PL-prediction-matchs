@@ -4,21 +4,21 @@ from sklearn.ensemble import GradientBoostingRegressor, RandomForestClassifier
 import numpy as np
 import simpy 
 import random
-from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
+from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_a_dom, moyenne_con_but_a_ext, moyenne_a_dom_but, moyenne_a_ext_but, data_2324
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 from buts_match_equipe import buteurs_Dans_Match, buts_minutes
 
 
 avantageDomicile(data_2324)
-difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
-difference_buts(data_2324,moyenne_con_but_dom,moyenne_con_but_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
+difference_buts(data_2324,moyenne_a_dom_but,moyenne_a_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
+difference_buts(data_2324,moyenne_con_but_a_dom,moyenne_con_but_a_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
 
 features_match = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', 'Home_avgShot_Target','Away_avgShot_Target'
-            , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts','difference_moyenne_buts_marques','difference_moyenne_buts_conceder', 
-            'moyenne_conceder_dom', 'moyenne_conceder_ext']
+            , 'home_form','away_form', 'home_advantage','moyenne_a_domcile_buts','moyenne_a_exterieur_buts','difference_moyenne_buts_marques','difference_moyenne_buts_conceder', 
+            'moyenne_conceder_a_dom', 'moyenne_conceder_a_ext']
 
 features_possesion =['Home_avgGoal','Away_avgGoal','Away_avgShot', 'Home_avgShot_Target','Away_avgShot_Target',
-                     'home_form','difference_moyenne_buts_conceder','moyenne_conceder_dom', 'moyenne_conceder_ext']
+                     'home_form','difference_moyenne_buts_conceder','moyenne_conceder_a_dom', 'moyenne_conceder_a_ext']
 
 x_features_match = data_2324[features_match]
 y_home = data_2324['HomeGoal']
@@ -48,17 +48,17 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     home_form = data[data['HomeTeam'] == h_team]['home_form'].values[-1]
     away_form = data[data['AwayTeam'] == a_team]['away_form'].values[-1]
     home_advantage = data[data['HomeTeam'] == h_team]['home_advantage'].values[-1]
-    moyenne_domcile_buts = moyenne_dom_but[h_team]
-    moyenne_extérieur_buts = moyenne_ext_but[a_team]
-    moyenne_conceder_dom = moyenne_con_but_dom[h_team]
-    moyenne_conceder_ext = moyenne_con_but_ext[a_team]
-    difference_moyenne_buts_marques = moyenne_domcile_buts - moyenne_extérieur_buts
-    difference_moyenne_buts_conceder = moyenne_conceder_dom - moyenne_conceder_ext
+    moyenne_a_domcile_buts = moyenne_a_dom_but[h_team]
+    moyenne_a_extérieur_buts = moyenne_a_ext_but[a_team]
+    moyenne_conceder_a_dom = moyenne_con_but_a_dom[h_team]
+    moyenne_conceder_a_ext = moyenne_con_but_a_ext[a_team]
+    difference_moyenne_buts_marques = moyenne_a_domcile_buts - moyenne_a_extérieur_buts
+    difference_moyenne_buts_conceder = moyenne_conceder_a_dom - moyenne_conceder_a_ext
     
 
     match_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,home_avg_shot_target,away_avg_shot_target,
-                                    home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne_buts_marques,
-                                    difference_moyenne_buts_conceder, moyenne_conceder_dom, moyenne_conceder_ext]],
+                                    home_form, away_form, home_advantage, moyenne_a_domcile_buts,moyenne_a_extérieur_buts, difference_moyenne_buts_marques,
+                                    difference_moyenne_buts_conceder, moyenne_conceder_a_dom, moyenne_conceder_a_ext]],
                                   columns=features_match)
     #print(match_features)
     

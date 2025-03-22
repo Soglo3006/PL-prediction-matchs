@@ -3,7 +3,7 @@ import pandas as pd
 data_2324 = pd.read_csv('season-2324.csv')
 data_2223 = pd.read_csv('season-2223.csv')
 
-def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol ):
+def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol):
     equipe = {}
     for i in data[h_team].unique():
         equipe[i] = 0 
@@ -88,8 +88,8 @@ def difference_buts(data, moyenne_dom, moyenne_ext, newCol, newCol2):
             data.loc[i,newCol] = ext[data.loc[i,'AwayTeam']] - dom[data.loc[i,'HomeTeam']]
             data.loc[i,newCol2] = data.loc[i,'AwayTeam']
 
-moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','AvgGoalDuringSeasonHT','AvgGoalDuringSeasonAT')
-moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','HomeShotsAvg','AwayShotsAvg')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','Home_avgGoal','Away_avgGoal')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','Home_avgShot','Away_avgShot')
 
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShotTarget','AwayShotTarget','Home_avgShot_Target','Away_avgShot_Target')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HCorners','ACorners','Home_avgCorner','Away_avgCorner')
@@ -101,10 +101,10 @@ moyenne_stats(data_2324,'HomeTeam','AwayTeam','HFouls','AFouls','Home_avgFouls',
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
 
-moyenne_dom_but = moyenne_stats_buts(data_2324,'HomeTeam','HomeGoal','moyenne_domcile_buts')
-moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_exterieur_buts')
-moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
-moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
+moyenne_a_dom_but = moyenne_stats_buts(data_2324,'HomeTeam','HomeGoal','moyenne_a_domcile_buts')
+moyenne_a_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_a_exterieur_buts')
+moyenne_con_but_a_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_a_dom')
+moyenne_con_but_a_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_a_ext')
 
 #print(data_2324[0:50])
 
