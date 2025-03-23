@@ -96,7 +96,6 @@ def possesion(data,h_team,a_team,newCol1,newCol2):
             elif data.loc[i,a_team] == j:
                 data.loc[i,newCol2] = 0.50
                 
-                
 
 #data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HYellow', 'Home_avgYellow')
 #data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AYellow', 'Away_avgYellow')
@@ -117,4 +116,6 @@ moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_ex
 moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
 moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
-possesion(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion')
+#possesion(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion')
+
+

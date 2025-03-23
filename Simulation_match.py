@@ -5,7 +5,7 @@ import numpy as np
 import simpy 
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from détails_simulation import match_process
-
+import matplotlib.pyplot as plt
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
@@ -27,7 +27,6 @@ def train_goal_models(data, features, teamGoal, model_type):
     return model
 
 model_home = train_goal_models(data_2324, features_match, 'HomeGoal',RandomForestClassifier)
-
 model_away = train_goal_models(data_2324, features_match, 'AwayGoal',RandomForestClassifier)
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
