@@ -110,52 +110,48 @@ moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenn
 moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
 
+import pandas as pd
 
-def changerDate(data):
-    for i in range(len(data)):
-        date = data.loc[i, 'Date']
+def formatDate(match_df):
+    for i in range(len(match_df)):
+        date = match_df.loc[i, 'Date']
         annee = date[2:4] 
         mois = date[5:7]  
         jour = date[8:10]  
+        match_df.loc[i, 'Date'] = f"{jour}/{mois}/{annee}"
 
-        data.loc[i, 'Date'] = f"{jour}/{mois}/{annee}"
+    match_df['Date'] = pd.to_datetime(match_df['Date'], format='%d/%m/%y')
+    match_df = match_df.sort_values(by='Date').reset_index(drop=True)
+    match_df['Date'] = match_df['Date'].dt.strftime('%d/%m/%y')
 
-    data['Date'] = pd.to_datetime(data['Date'], format='%d/%m/%y')
+    return match_df
 
-    data = data.sort_values(by='Date').reset_index(drop=True)
+def correct_team_names(match_df):
+    corrections = {
+        'Luton Town': 'Luton',
+        'Newcastle Utd': 'Newcastle',
+        'Sheffield Utd': 'Sheffield United',
+        'Manchester Utd': 'Manchester United',
+        "Nott'ham Forest": 'Nottingham Forest'
+    }
+    match_df['Opponent'] = match_df['Opponent'].replace(corrections)
 
-    data['Date'] = data['Date'].dt.strftime('%d/%m/%y')
+    return match_df
+
+def TeamPossesion(match_df, data_df):
+    for k in range(len(match_df)):
+        for h in range(len(data_df)):
+            if match_df.loc[k, 'Date'] == data_df.loc[h, 'Date']:
+                if match_df.loc[k, 'Opponent'] == data_df.loc[h, 'HomeTeam']:
+                    data_df.loc[h, 'AwayPossesion'] = 100 - match_df.loc[k, 'Poss']
+                    data_df.loc[h, 'HomePossesion'] = 100 - data_df.loc[h, 'AwayPossesion']
     
-    return data
+    return data_df
 
-changerDate(match_2324)
+match_2324 = formatDate(match_2324)
+match_2324 = correct_team_names(match_2324)
+data_2324 = TeamPossesion(match_2324, data_2324)
 
-def modifierNom(data):
-    for j in data['Opponent'].unique():
-        if j == 'Luton Town':
-            data.loc[data['Opponent'] == j, 'Opponent'] = 'Luton'
-        elif j == 'Newcastle Utd':
-            data.loc[data['Opponent'] == j, 'Opponent'] = 'Newcastle'
-        elif j == 'Sheffield Utd':
-            data.loc[data['Opponent'] == j, 'Opponent'] = 'Sheffield United'
-        elif j == 'Manchester Utd':
-            data.loc[data['Opponent'] == j, 'Opponent'] = 'Manchester United'
-        elif j == "Nott'ham Forest":
-            data.loc[data['Opponent'] == j, 'Opponent'] = 'Nottingham Forest'
-        return data
-            
-modifierNom(match_2324)
-        
-def TeamPossesion(data1,data2):
-    for k in range (len(data2)):
-        for h in range(len(data1)):
-            if data2.loc[k,'Date'] == data1.loc[h,'Date']:
-                if data2.loc[k,'Opponent'] == data1.loc[h,'HomeTeam']:
-                    data1.loc[h,'AwayPossesion'] = 100-data2.loc[k,'Poss']
-                    data1.loc[h,'HomePossesion'] = 100 - data1.loc[h,'AwayPossesion']
-                    
-    return data1
+print(data_2324)
 
-TeamPossesion(data_2324,match_2324)
 
-print(data_2324[0:21])
