@@ -128,17 +128,20 @@ def changerDate(data):
 
 changerDate(match_2324)
 
-for j in match_2324['Opponent'].unique():
-    if j == 'Luton Town':
-        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Luton'
-    elif j == 'Newcastle Utd':
-        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Newcastle'
-    elif j == 'Sheffield Utd':
-        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Sheffield United'
-    elif j == 'Manchester Utd':
-        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Manchester United'
-    elif j == "Nott'ham Forest":
-        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Nottingham Forest'
+def modifierNom(data):
+    for j in data['Opponent'].unique():
+        if j == 'Luton Town':
+            data.loc[data['Opponent'] == j, 'Opponent'] = 'Luton'
+        elif j == 'Newcastle Utd':
+            data.loc[data['Opponent'] == j, 'Opponent'] = 'Newcastle'
+        elif j == 'Sheffield Utd':
+            data.loc[data['Opponent'] == j, 'Opponent'] = 'Sheffield United'
+        elif j == 'Manchester Utd':
+            data.loc[data['Opponent'] == j, 'Opponent'] = 'Manchester United'
+        elif j == "Nott'ham Forest":
+            data.loc[data['Opponent'] == j, 'Opponent'] = 'Nottingham Forest'
+            
+modifierNom(match_2324)
         
 for k in range (len(match_2324)):
     for h in range(len(data_2324)):
