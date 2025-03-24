@@ -2,7 +2,7 @@ import random
 from buts_match_equipe import buteurs_Dans_Match
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
-def match_process(env, home_team, away_team, prediction_buts_home, prediction_buts_away):
+def match_process(env, home_team, away_team, prediction_buts_home, prediction_buts_away, HomePossesion, AwayPossesion):
     minute = 0
     score_home = 0
     score_away = 0
@@ -15,7 +15,7 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
     while minute < 90:
         yield env.timeout(1)  
         minute += 1
-        possession = random.choices([home_team, away_team], weights=[0.65, 0.35])[0]
+        possession = random.choices([home_team, away_team], weights=[HomePossesion/100,AwayPossesion/100])[0]
         if random.random() < 0.2:  
             if possession == home_team and score_home < prediction_buts_home:
                 score_home += 1

@@ -1,18 +1,11 @@
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from fetch_premier_league_data import moyenne_dom_but, moyenne_ext_but, data_2324, avantageDomicile, difference_buts
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import numpy as np
-from Simulation_match import train_models
 
-h_team = 'Manchester City'
-a_team = 'Luton'
 
-data = data_2324
-
-avantageDomicile(data)
-difference_buts(data,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
 
 features_possession = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', 'Home_avgShot_Target','Away_avgShot_Target'
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts'
@@ -26,9 +19,8 @@ def train_models_possesion(data,features,Categorie,modelType):
     model = modelType(n_estimators=1500, max_depth=15,min_samples_split=10, random_state=1)
     model.fit(A_train, B_train)
     
-    return model_possession
+    return model
 
-model_possession = train_models_possesion(data,features_possession, 'HomePossesion',RandomForestRegressor)
 
 #feature_importances = model_possession.feature_importances_
 #plt.barh(features_possession, feature_importances)
@@ -75,4 +67,3 @@ def predict_future_match_possesion(data,h_team, a_team, model):
 
     return home_possesion,away_possession
 
-home_possesion, away_possesion = predict_future_match_possesion(data, h_team, a_team, model_possession)

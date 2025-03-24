@@ -1,11 +1,12 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import GradientBoostingRegressor, RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 import numpy as np
 import simpy 
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from détails_simulation import match_process
 import matplotlib.pyplot as plt
+from possesion import train_models_possesion, predict_future_match_possesion, features_possession
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
@@ -67,8 +68,12 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     prediction_buts_domicile = max(0,round(prediction_buts_domicile))
     prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
     
+    model_possession = train_models_possesion(data,features_possession, 'HomePossesion',RandomForestRegressor)
+    
+    home_possesion, away_possesion = predict_future_match_possesion(data, h_team, a_team, model_possession)
+    
     env = simpy.Environment()
-    match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur))
+    match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur,home_possesion,away_possesion))
 
     env.run()
     buteurs_home, buteurs_away = match_result.value
