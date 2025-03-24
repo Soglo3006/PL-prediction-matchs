@@ -109,19 +109,24 @@ moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_ex
 moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
 moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
-for i in range(len(match_2324)):
-    date = match_2324.loc[i, 'Date']
-    annee = date[2:4] 
-    mois = date[5:7]  
-    jour = date[8:10]  
 
-    match_2324.loc[i, 'Date'] = f"{jour}/{mois}/{annee}"
 
-match_2324['Date'] = pd.to_datetime(match_2324['Date'], format='%d/%m/%y')
+def changerDate(data):
+    for i in range(len(data)):
+        date = data.loc[i, 'Date']
+        annee = date[2:4] 
+        mois = date[5:7]  
+        jour = date[8:10]  
 
-match_2324 = match_2324.sort_values(by='Date').reset_index(drop=True)
+        data.loc[i, 'Date'] = f"{jour}/{mois}/{annee}"
 
-match_2324['Date'] = match_2324['Date'].dt.strftime('%d/%m/%y')
+    data['Date'] = pd.to_datetime(data['Date'], format='%d/%m/%y')
+
+    data = data.sort_values(by='Date').reset_index(drop=True)
+
+    data['Date'] = data['Date'].dt.strftime('%d/%m/%y')
+
+changerDate(match_2324)
 
 for j in match_2324['Opponent'].unique():
     if j == 'Luton Town':
