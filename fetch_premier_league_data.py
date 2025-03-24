@@ -132,6 +132,10 @@ def TeamPossesion(match_df, data_df,newCol1, newCol2):
 #data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ARed', 'Away_avgRed')
 #data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HFouls','Home_avgFouls')
 #data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AFouls','Away_avgFouls')
+
+match_2324 = formatDate(match_2324)
+match_2324 = correct_team_names(match_2324)
+
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','Home_avgGoal','Away_avgGoal')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','Home_avgShot','Away_avgShot')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShotTarget','AwayShotTarget','Home_avgShot_Target','Away_avgShot_Target')
@@ -145,10 +149,9 @@ moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_ex
 moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
 moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
-match_2324 = formatDate(match_2324)
-match_2324 = correct_team_names(match_2324)
-data_2324 = TeamPossesion(match_2324, data_2324,'HomePossesion', 'AwayPossesion')
+data_2324 = TeamPossesion(match_2324, data_2324,'AwayPossesion', 'HomePossesion')
 
-print(data_2324)
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion','Home_avgPos','Away_avgPos')
 
+print(data_2324[0:30])
 
