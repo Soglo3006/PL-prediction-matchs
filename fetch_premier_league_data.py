@@ -1,6 +1,7 @@
 import pandas as pd
 
 data_2324 = pd.read_csv('season-2324.csv')
+match_2324 = pd.read_csv('matches-23-24.csv')
 
 def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol ):
     equipe = {}
@@ -119,3 +120,43 @@ moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenn
 #possesion(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion')
 
 
+
+for i in range(len(match_2324)):
+    date = match_2324.loc[i, 'Date']
+    annee = date[2:4] 
+    mois = date[5:7]  
+    jour = date[8:10]  
+
+    match_2324.loc[i, 'Date'] = f"{jour}/{mois}/{annee}"
+
+match_2324['Date'] = pd.to_datetime(match_2324['Date'], format='%d/%m/%y')
+
+match_2324 = match_2324.sort_values(by='Date').reset_index(drop=True)
+
+match_2324['Date'] = match_2324['Date'].dt.strftime('%d/%m/%y')
+
+for j in match_2324['Opponent'].unique():
+    if j == 'Luton Town':
+        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Luton'
+    elif j == 'Newcastle Utd':
+        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Newcastle'
+    elif j == 'Sheffield Utd':
+        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Sheffield United'
+    elif j == 'Manchester Utd':
+        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Manchester United'
+    elif j == "Nott'ham Forest":
+        match_2324.loc[match_2324['Opponent'] == j, 'Opponent'] = 'Nottingham Forest'
+        
+for k in range (len(match_2324)):
+    for h in range(len(data_2324)):
+        if match_2324.loc[k,'Date'] == data_2324.loc[h,'Date']:
+            if match_2324.loc[k,'Opponent'] == data_2324.loc[h,'HomeTeam']:
+                data_2324.loc[h,'AwayPossesion'] = 100-match_2324.loc[k,'Poss']
+                data_2324.loc[h,'HomePossesion'] = 100 - data_2324.loc[h,'AwayPossesion']
+
+#for z in range(len(data_2324)):
+    
+    
+
+#print(match_2324.loc[0:21, ['Date', 'Poss', 'Opponent', 'Team']])
+print(data_2324[0:21])
