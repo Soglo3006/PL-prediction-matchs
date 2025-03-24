@@ -88,30 +88,7 @@ def difference_buts(data, moyenne_dom, moyenne_ext, newCol, newCol2):
         else:
             data.loc[i,newCol] = ext[data.loc[i,'AwayTeam']] - dom[data.loc[i,'HomeTeam']]
             data.loc[i,newCol2] = data.loc[i,'AwayTeam']
-                
-
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HYellow', 'Home_avgYellow')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AYellow', 'Away_avgYellow')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HRed', 'Home_avgRed')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ARed', 'Away_avgRed')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HFouls','Home_avgFouls')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AFouls','Away_avgFouls')
-moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','Home_avgGoal','Away_avgGoal')
-moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','Home_avgShot','Away_avgShot')
-moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShotTarget','AwayShotTarget','Home_avgShot_Target','Away_avgShot_Target')
-moyenne_stats(data_2324,'HomeTeam','AwayTeam','HCorners','ACorners','Home_avgCorner','Away_avgCorner')
-
-data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
-data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
-
-moyenne_dom_but = moyenne_stats_buts(data_2324,'HomeTeam','HomeGoal','moyenne_domcile_buts')
-moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_exterieur_buts')
-moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
-moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
-
-
-import pandas as pd
-
+            
 def formatDate(match_df):
     for i in range(len(match_df)):
         date = match_df.loc[i, 'Date']
@@ -138,19 +115,39 @@ def correct_team_names(match_df):
 
     return match_df
 
-def TeamPossesion(match_df, data_df):
+def TeamPossesion(match_df, data_df,newCol1, newCol2):
     for k in range(len(match_df)):
         for h in range(len(data_df)):
             if match_df.loc[k, 'Date'] == data_df.loc[h, 'Date']:
                 if match_df.loc[k, 'Opponent'] == data_df.loc[h, 'HomeTeam']:
-                    data_df.loc[h, 'AwayPossesion'] = 100 - match_df.loc[k, 'Poss']
-                    data_df.loc[h, 'HomePossesion'] = 100 - data_df.loc[h, 'AwayPossesion']
+                    data_df.loc[h, newCol2] = 100 - match_df.loc[k, 'Poss']
+                    data_df.loc[h, newCol1] = 100 - data_df.loc[h, newCol2]
     
     return data_df
+                
+
+#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HYellow', 'Home_avgYellow')
+#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AYellow', 'Away_avgYellow')
+#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HRed', 'Home_avgRed')
+#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ARed', 'Away_avgRed')
+#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HFouls','Home_avgFouls')
+#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AFouls','Away_avgFouls')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','Home_avgGoal','Away_avgGoal')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','Home_avgShot','Away_avgShot')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShotTarget','AwayShotTarget','Home_avgShot_Target','Away_avgShot_Target')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HCorners','ACorners','Home_avgCorner','Away_avgCorner')
+
+data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
+data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
+
+moyenne_dom_but = moyenne_stats_buts(data_2324,'HomeTeam','HomeGoal','moyenne_domcile_buts')
+moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_exterieur_buts')
+moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
+moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
 match_2324 = formatDate(match_2324)
 match_2324 = correct_team_names(match_2324)
-data_2324 = TeamPossesion(match_2324, data_2324)
+data_2324 = TeamPossesion(match_2324, data_2324,'HomePossesion', 'AwayPossesion')
 
 print(data_2324)
 
