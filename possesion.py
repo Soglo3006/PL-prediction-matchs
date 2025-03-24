@@ -4,6 +4,7 @@ from fetch_premier_league_data import moyenne_dom_but, moyenne_ext_but, data_232
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import numpy as np
+from Simulation_match import train_models
 
 h_team = 'Manchester City'
 a_team = 'Luton'
@@ -17,14 +18,17 @@ features_possession = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgSho
             , 'home_form','away_form', 'home_advantage','moyenne_domcile_buts','moyenne_exterieur_buts'
             ,'difference_moyenne_buts_marques','Home_avgPos','Away_avgPos']
 
+def train_models_possesion(data,features,Categorie,modelType):
+    A = data[features]
+    B = data[Categorie]
+    A_train, A_test, B_train, B_test = train_test_split(A, B, test_size=0.2, random_state=1)
 
+    model = modelType(n_estimators=1500, max_depth=15,min_samples_split=10, random_state=1)
+    model.fit(A_train, B_train)
+    
+    return model_possession
 
-A = data[features_possession]
-B = data['HomePossesion']
-A_train, A_test, B_train, B_test = train_test_split(A, B, test_size=0.2, random_state=1)
-
-model_possession = RandomForestRegressor(n_estimators=1500, max_depth=15,min_samples_split=10, random_state=1)
-model_possession.fit(A_train, B_train)
+model_possession = train_models_possesion(data,features_possession, 'HomePossesion',RandomForestClassifier)
 
 #feature_importances = model_possession.feature_importances_
 #plt.barh(features_possession, feature_importances)
