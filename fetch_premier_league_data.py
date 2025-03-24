@@ -125,6 +125,8 @@ def changerDate(data):
     data = data.sort_values(by='Date').reset_index(drop=True)
 
     data['Date'] = data['Date'].dt.strftime('%d/%m/%y')
+    
+    return data
 
 changerDate(match_2324)
 
@@ -140,14 +142,20 @@ def modifierNom(data):
             data.loc[data['Opponent'] == j, 'Opponent'] = 'Manchester United'
         elif j == "Nott'ham Forest":
             data.loc[data['Opponent'] == j, 'Opponent'] = 'Nottingham Forest'
+        return data
             
 modifierNom(match_2324)
         
-for k in range (len(match_2324)):
-    for h in range(len(data_2324)):
-        if match_2324.loc[k,'Date'] == data_2324.loc[h,'Date']:
-            if match_2324.loc[k,'Opponent'] == data_2324.loc[h,'HomeTeam']:
-                data_2324.loc[h,'AwayPossesion'] = 100-match_2324.loc[k,'Poss']
-                data_2324.loc[h,'HomePossesion'] = 100 - data_2324.loc[h,'AwayPossesion']
+def TeamPossesion(data1,data2):
+    for k in range (len(data2)):
+        for h in range(len(data1)):
+            if data2.loc[k,'Date'] == data1.loc[h,'Date']:
+                if data2.loc[k,'Opponent'] == data1.loc[h,'HomeTeam']:
+                    data1.loc[h,'AwayPossesion'] = 100-data2.loc[k,'Poss']
+                    data1.loc[h,'HomePossesion'] = 100 - data1.loc[h,'AwayPossesion']
+                    
+    return data1
+
+TeamPossesion(data_2324,match_2324)
 
 print(data_2324[0:21])
