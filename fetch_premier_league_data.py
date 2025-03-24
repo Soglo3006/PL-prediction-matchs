@@ -153,5 +153,5 @@ data_2324 = TeamPossesion(match_2324, data_2324,'AwayPossesion', 'HomePossesion'
 
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion','Home_avgPos','Away_avgPos')
 
-print(data_2324[0:30])
+#print(data_2324[0:30])
 
