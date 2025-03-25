@@ -77,6 +77,10 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
                                    ,Home_avgPos,Away_avgPos,Home_avgCorner,Away_avgCorner]],
                                 columns=features_tirs)
     
+    tirsCadres_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,home_avg_shot_target, away_avg_shot_target,
+                                   home_form, away_form,home_advantage,moyenne_domcile_buts, moyenne_extérieur_buts,
+                                   Home_avgPos,Away_avgPos]], columns=features_tirsCadre)
+    
     prediction_buts_domicile = (model_1.predict(match_features)[0])
     prediction_buts_extérieur = (model_2.predict(match_features)[0])
     
@@ -105,6 +109,17 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     prediction_tirs_extérieur += np.random.normal(loc=0, scale=scale_dynamic)
     
     print(round(prediction_tirs_domicile),round(prediction_tirs_extérieur))
+    
+    prediction_tirs_cadre_domicile = (model_tirsCadreH.predict(tirsCadres_features)[0])
+    prediction_tirs_cadre_extérieur = (model_tirsCadreA.predict(tirsCadres_features)[0])
+    
+    prediction_tirs_cadre_domicile += np.random.normal(0, 0.7)
+    prediction_tirs_cadre_extérieur += np.random.normal(0, 0.7)
+    
+    prediction_tirs_cadre_domicile = max(0,round(prediction_tirs_cadre_domicile))
+    prediction_tirs_cadre_extérieur = max(0,round(prediction_tirs_cadre_extérieur))
+    
+    print(round(prediction_tirs_cadre_domicile),round(prediction_tirs_cadre_extérieur))
     
     env = simpy.Environment()
     match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur,home_possesion,away_possession))
