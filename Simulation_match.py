@@ -19,7 +19,7 @@ def train_models(data, features, teamCategorie):
     if teamCategorie == 'HomeGoal' or teamCategorie == 'AwayGoal':
         model = RandomForestClassifier(n_estimators=500, max_depth=7, random_state=1)
         model.fit(X_train, y_train)
-    elif teamCategorie == 'HomePossesion':
+    elif teamCategorie == 'HomePossesion' or teamCategorie == 'HomeShots' or teamCategorie == 'AwayShots':
         model = RandomForestRegressor(n_estimators=1500, max_depth=15, min_samples_split=10, random_state=1)
         model.fit(X_train, y_train)
 
@@ -28,8 +28,8 @@ def train_models(data, features, teamCategorie):
 model_home = train_models(data_2324, features_match, 'HomeGoal')
 model_away = train_models(data_2324, features_match, 'AwayGoal')
 model_possession = train_models(data_2324,features_possession, 'HomePossesion')
-#model_tirs = train_models(data_2324,features_tirs,'HomeShots')
-#model_tirs = train_models(data_2324,features_tirs,'AwayShots')
+model_tirsH = train_models(data_2324,features_tirs,'HomeShots')
+model_tirsA = train_models(data_2324,features_tirs,'AwayShots')
 
 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
@@ -69,6 +69,12 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
                                     moyenne_domcile_buts, moyenne_extérieur_buts,difference_moyenne_buts_marques,moyenne_conceder_dom,moyenne_conceder_ext,Home_avgPos,Away_avgPos]],
                                 columns=features_possession)
     
+    tirs_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,
+                                   home_form, away_form,moyenne_domcile_buts, moyenne_extérieur_buts,
+                                   difference_moyenne_buts_marques,moyenne_conceder_dom,moyenne_conceder_ext
+                                   ,Home_avgPos,Away_avgPos,Home_avgCorner,Away_avgCorner]],
+                                columns=features_tirs)
+    
     prediction_buts_domicile = (model_1.predict(match_features)[0])
     prediction_buts_extérieur = (model_2.predict(match_features)[0])
     
@@ -86,6 +92,17 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     prediction_possession = max(20, min(80, prediction_possession))
     home_possesion = round(prediction_possession)
     away_possession = 100 - prediction_possession
+    
+    prediction_tirs_domicile = (model_tirsH.predict(tirs_features)[0])
+    prediction_tirs_extérieur = (model_tirsA.predict(tirs_features)[0])
+    
+    diff_niveau = abs(prediction_tirs_domicile - prediction_tirs_extérieur)
+    scale_dynamic = max(1.5, min(3, diff_niveau / 2))  
+
+    prediction_tirs_domicile += np.random.normal(loc=0, scale=scale_dynamic)
+    prediction_tirs_extérieur += np.random.normal(loc=0, scale=scale_dynamic)
+    
+    print(prediction_tirs_domicile,prediction_tirs_extérieur)
     
     env = simpy.Environment()
     match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur,home_possesion,away_possession))
