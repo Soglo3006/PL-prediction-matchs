@@ -2,14 +2,16 @@ import pandas as pd
 
 data_joueur_stats = pd.read_csv('premier-player-23-24.csv')
 
-data_joueur_stats['PlayerID'] = data_joueur_stats['Player'].astype("category").cat.codes
-data_joueur_stats['TeamID'] = data_joueur_stats['Team'].astype("category").cat.codes
+def AjoutStats(data):
+    data['PlayerID'] = data['Player'].astype("category").cat.codes
+    data['TeamID'] = data['Team'].astype("category").cat.codes
 
-for i in range(len(data_joueur_stats)):
-    data_joueur_stats.loc[i,'Team'] = data_joueur_stats.loc[i,'Team'].strip()
-    data_joueur_stats.loc[i,'GoalsPerGames'] = round(data_joueur_stats.loc[i,'Gls']/data_joueur_stats.loc[i,'MP'],2)
-    data_joueur_stats.loc[i,'Buts'] = 0
+    for i in range(len(data)):
+        data.loc[i,'Team'] = data.loc[i,'Team'].strip()
+        data.loc[i,'GoalsPerGames'] = round(data.loc[i,'Gls']/data.loc[i,'MP'],2)
+        data.loc[i,'Buts'] = 0
 
+    return data
 
 def penalty_taker(data):
     TakersPerTeam = {}
@@ -38,7 +40,6 @@ def find_top_scorer(data):
         top_scorers[team_name] = player_name
     return top_scorers
 
-top_scorers = find_top_scorer(penalty_taker(data_joueur_stats))
 
 def valeur_takers(data):
     FKTakersPerTeam = {'Manchester City': 'Kevin De Bruyne', 'Liverpool': 'Trent Alexander-Arnold', 'Arsenal': 'Martin Ødegaard', 'Chelsea': 'Cole Palmer', 
@@ -55,8 +56,7 @@ def valeur_takers(data):
             data.loc[j,'FKTaker'] = 1
         else:
             data.loc[j,'FKTaker'] = 0
-            
-valeur_takers(data_joueur_stats)
+
 
 def data_team_effectif(data):
     Starting11EachTeam  = {}
@@ -74,6 +74,10 @@ def data_team_effectif(data):
         }
     return dataJoueur
 
+
+data_joueur_stats = AjoutStats(data_joueur_stats)
+top_scorers = find_top_scorer(penalty_taker(data_joueur_stats))
+valeur_takers(data_joueur_stats)
 data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
 
 
