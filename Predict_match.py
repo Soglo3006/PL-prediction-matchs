@@ -30,6 +30,48 @@ model_redH = train_models(data_2324,features_cartons_rouges,'HRed')
 model_redA = train_models(data_2324,features_cartons_rouges,'ARed')
 """
 
+def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom,pos_features,match_feature,tirs_stats_features,tirs_cadre_stat_features):
+    prediction_buts_domicile = (model_buts_dom.predict(match_feature)[0]) + np.random.normal(0, 0.7)
+    prediction_buts_extérieur = (model_buts_extérieur.predict(match_feature)[0]) + np.random.normal(0, 0.7)
+
+    prediction_buts_domicile = max(0,round(prediction_buts_domicile))
+    prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
+        
+    prediction_possession = model_possesion_dom.predict(pos_features)[0] + np.random.normal(loc=0, scale=4)
+
+    prediction_possession = max(20, min(80, prediction_possession))
+    home_possesion = round(prediction_possession)
+    away_possession = 100 - prediction_possession
+
+    prediction_tirs_domicile = (model_tirsH.predict(tirs_stats_features)[0])
+    prediction_tirs_extérieur = (model_tirsA.predict(tirs_stats_features)[0])
+
+    diff_niveau = abs(prediction_tirs_domicile - prediction_tirs_extérieur)
+    scale_dynamic = max(1.5, min(4, (diff_niveau / 1.5) + 0.5))  
+
+    prediction_tirs_domicile += np.random.normal(loc=0, scale=scale_dynamic)
+    prediction_tirs_extérieur += np.random.normal(loc=0, scale=scale_dynamic)
+
+    print(round(prediction_tirs_domicile),round(prediction_tirs_extérieur))
+
+    prediction_tirs_cadre_domicile = (model_tirsCadreH.predict(tirs_cadre_stat_features)[0]) + np.random.normal(0, 0.7)
+    prediction_tirs_cadre_extérieur = (model_tirsCadreA.predict(tirs_cadre_stat_features)[0]) + np.random.normal(0, 0.7)
+
+    prediction_tirs_cadre_domicile = max(0,round(prediction_tirs_cadre_domicile))
+    prediction_tirs_cadre_extérieur = max(0,round(prediction_tirs_cadre_extérieur))
+
+    print(round(prediction_tirs_cadre_domicile),round(prediction_tirs_cadre_extérieur))
+    
+    return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur
+
+def simulate_match(h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession):
+    env = simpy.Environment()
+    match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession))
+    
+    env.run()
+    buteurs_home, buteurs_away = match_result.value 
+
+    return buteurs_home, buteurs_away 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     if h_team not in data['HomeTeam'].unique():
         return None
@@ -77,50 +119,10 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
                                    home_form, away_form,home_advantage,moyenne_domcile_buts, moyenne_extérieur_buts,
                                    Home_avgPos,Away_avgPos]], columns=features_tirsCadre)
     
-    prediction_buts_domicile = (model_1.predict(match_features)[0])
-    prediction_buts_extérieur = (model_2.predict(match_features)[0])
     
-    prediction_buts_domicile += np.random.normal(0, 0.7) 
-    prediction_buts_extérieur += np.random.normal(0, 0.7)
-    
-    prediction_buts_domicile = max(0,round(prediction_buts_domicile))
-    prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
-        
-    prediction_possession = model_3.predict(possesion_features)[0]
-    
-    fluctuation = np.random.normal(loc=0, scale=4) 
-    prediction_possession += fluctuation
-    
-    prediction_possession = max(20, min(80, prediction_possession))
-    home_possesion = round(prediction_possession)
-    away_possession = 100 - prediction_possession
-    
-    prediction_tirs_domicile = (model_tirsH.predict(tirs_features)[0])
-    prediction_tirs_extérieur = (model_tirsA.predict(tirs_features)[0])
-    
-    diff_niveau = abs(prediction_tirs_domicile - prediction_tirs_extérieur)
-    scale_dynamic = max(1.5, min(3, diff_niveau / 2))  
-
-    prediction_tirs_domicile += np.random.normal(loc=0, scale=scale_dynamic)
-    prediction_tirs_extérieur += np.random.normal(loc=0, scale=scale_dynamic)
-    
-    print(round(prediction_tirs_domicile),round(prediction_tirs_extérieur))
-    
-    prediction_tirs_cadre_domicile = (model_tirsCadreH.predict(tirsCadres_features)[0])
-    prediction_tirs_cadre_extérieur = (model_tirsCadreA.predict(tirsCadres_features)[0])
-    
-    prediction_tirs_cadre_domicile += np.random.normal(0, 0.7)
-    prediction_tirs_cadre_extérieur += np.random.normal(0, 0.7)
-    
-    prediction_tirs_cadre_domicile = max(0,round(prediction_tirs_cadre_domicile))
-    prediction_tirs_cadre_extérieur = max(0,round(prediction_tirs_cadre_extérieur))
-    
-    print(round(prediction_tirs_cadre_domicile),round(prediction_tirs_cadre_extérieur))
-    
-    env = simpy.Environment()
-    match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur,home_possesion,away_possession))
-
-    env.run()
-    buteurs_home, buteurs_away = match_result.value
+    home_possession, away_possession, prediction_buts_domicile, prediction_buts_extérieur = predict_match_stats(
+    model_1, model_2, model_3, possesion_features, match_features, tirs_features, tirsCadres_features
+    )
+    buteurs_home,buteurs_away = simulate_match(h_team,a_team,prediction_buts_domicile,prediction_buts_extérieur,home_possession,away_possession)
     
     return prediction_buts_domicile,prediction_buts_extérieur,buteurs_home,buteurs_away
