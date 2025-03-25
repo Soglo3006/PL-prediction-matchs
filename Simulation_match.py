@@ -18,17 +18,21 @@ features_match = ['Home_avgGoal','Away_avgGoal','Home_avgShot','Away_avgShot', '
 
 
 
-def train_models(data, features, teamCategorie, model_type):
+def train_models(data, features, teamCategorie):
     X = data[features]
     y_home = data[teamCategorie]
     X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
-    model = model_type(n_estimators=500, max_depth=7, random_state=1)
-    model.fit(X_train, y_train)
+    if teamCategorie == 'HomeGoal' or teamCategorie == 'AwayGoal':
+        model = RandomForestClassifier(n_estimators=500, max_depth=7, random_state=1)
+        model.fit(X_train, y_train)
+    elif teamCategorie == 'HomePossesion':
+        model = RandomForestRegressor(n_estimators=1500, max_depth=15, min_samples_split=10, random_state=1)
+        model.fit(X_train, y_train)
 
     return model
 
-model_home = train_models(data_2324, features_match, 'HomeGoal',RandomForestClassifier)
-model_away = train_models(data_2324, features_match, 'AwayGoal',RandomForestClassifier)
+model_home = train_models(data_2324, features_match, 'HomeGoal')
+model_away = train_models(data_2324, features_match, 'AwayGoal')
 
 def predict_future_match(h_team, a_team, model_1, model_2, data):
     if h_team not in data['HomeTeam'].unique():
@@ -68,7 +72,7 @@ def predict_future_match(h_team, a_team, model_1, model_2, data):
     prediction_buts_domicile = max(0,round(prediction_buts_domicile))
     prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
     
-    model_possession = train_models_possesion(data,features_possession, 'HomePossesion',RandomForestRegressor)
+    model_possession = train_models(data,features_possession, 'HomePossesion')
     
     home_possesion, away_possesion = predict_future_match_possesion(data, h_team, a_team, model_possession)
     
