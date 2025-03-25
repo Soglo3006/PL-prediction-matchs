@@ -6,7 +6,7 @@ import simpy
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from détails_simulation import match_process
 import matplotlib.pyplot as plt
-from features import features_match,features_possession
+from features import features_match,features_possession,features_tirs
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
@@ -28,6 +28,8 @@ def train_models(data, features, teamCategorie):
 model_home = train_models(data_2324, features_match, 'HomeGoal')
 model_away = train_models(data_2324, features_match, 'AwayGoal')
 model_possession = train_models(data_2324,features_possession, 'HomePossesion')
+#model_tirs = train_models(data_2324,features_tirs,'HomeShots')
+#model_tirs = train_models(data_2324,features_tirs,'AwayShots')
 
 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
@@ -51,18 +53,20 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     moyenne_conceder_ext = moyenne_con_but_ext[a_team]
     difference_moyenne_buts_marques = moyenne_domcile_buts - moyenne_extérieur_buts
     difference_moyenne_buts_conceder = moyenne_conceder_dom - moyenne_conceder_ext
+    Home_avgCorner = data[data['HomeTeam']== h_team]['Home_avgCorner'].values[0]
+    Away_avgCorner = data[data['AwayTeam']== a_team]['Away_avgCorner'].values[0]
     Home_avgPos = data[data['HomeTeam'] == h_team]['Home_avgPos'].values[0]
     Away_avgPos = data[data['AwayTeam'] == a_team]['Away_avgPos'].values[0]
     
 
     match_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot,home_avg_shot_target,away_avg_shot_target,
                                     home_form, away_form, home_advantage, moyenne_domcile_buts,moyenne_extérieur_buts, difference_moyenne_buts_marques,
-                                    difference_moyenne_buts_conceder, moyenne_conceder_dom, moyenne_conceder_ext]],
+                                    difference_moyenne_buts_conceder, moyenne_conceder_dom, moyenne_conceder_ext,Home_avgCorner,Away_avgCorner,Home_avgPos,Away_avgPos]],
                                   columns=features_match)
     #print(match_features)
     possesion_features = pd.DataFrame([[home_avg_goal, away_avg_goal, home_avg_shot, away_avg_shot, 
                                     home_avg_shot_target, away_avg_shot_target, home_form, away_form,home_advantage,
-                                    moyenne_domcile_buts, moyenne_extérieur_buts,difference_moyenne_buts_marques,Home_avgPos,Away_avgPos]],
+                                    moyenne_domcile_buts, moyenne_extérieur_buts,difference_moyenne_buts_marques,moyenne_conceder_dom,moyenne_conceder_ext,Home_avgPos,Away_avgPos]],
                                 columns=features_possession)
     
     prediction_buts_domicile = (model_1.predict(match_features)[0])
