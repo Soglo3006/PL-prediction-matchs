@@ -124,14 +124,7 @@ def TeamPossesion(match_df, data_df,newCol1, newCol2):
                     data_df.loc[h, newCol1] = 100 - data_df.loc[h, newCol2]
     
     return data_df
-                
 
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HYellow', 'Home_avgYellow')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AYellow', 'Away_avgYellow')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HRed', 'Home_avgRed')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','ARed', 'Away_avgRed')
-#data_2324 = moyenne_Stats(data_2324, 'HomeTeam','HFouls','Home_avgFouls')
-#data_2324 = moyenne_Stats(data_2324, 'AwayTeam','AFouls','Away_avgFouls')
 
 match_2324 = formatDate(match_2324)
 match_2324 = correct_team_names(match_2324)
@@ -140,8 +133,12 @@ moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','Home_avgGoa
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','Home_avgShot','Away_avgShot')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShotTarget','AwayShotTarget','Home_avgShot_Target','Away_avgShot_Target')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HCorners','ACorners','Home_avgCorner','Away_avgCorner')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HYellow','AYellow','Home_avgYellow','Away_avgYellow')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HRed','ARed','Home_avgRed','Away_avgRed')
+moyenne_stats(data_2324,'HomeTeam','AwayTeam','HFouls','AFouls','Home_avgFouls','Away_avgFouls')
 
-#print(data_2324[0:30])
+
+print(data_2324[0:30])
 
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
