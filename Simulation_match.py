@@ -5,11 +5,38 @@ from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne
 from détails_simulation import match_process
 import matplotlib.pyplot as plt
 from features import features_match,features_possession,features_tirs,features_tirsCadre
-from model import model_home,model_away,model_possession,model_tirsH,model_tirsA,model_tirsCadreH,model_tirsCadreA
+from model import train_models
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
 difference_buts(data_2324,moyenne_con_but_dom,moyenne_con_but_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
+
+
+model_home = train_models(data_2324, features_match, 'HomeGoal')
+model_away = train_models(data_2324, features_match, 'AwayGoal')
+model_possession = train_models(data_2324,features_possession, 'HomePossesion')
+model_tirsH = train_models(data_2324,features_tirs,'HomeShots')
+model_tirsA = train_models(data_2324,features_tirs,'AwayShots')
+model_tirsCadreH = train_models(data_2324,features_tirsCadre,'HomeShotTarget')
+model_tirsCadreA = train_models(data_2324,features_tirsCadre,'AwayShotTarget')
+
+"""
+model_xGH = train_models(data_2324,features_xG,'Home_xG')
+
+model_xGA = train_models(data_2324,features_xG,'Away_xG')
+
+model_foulH = train_models(data_2324,features_foul,'HFouls')
+
+model_foulA = train_models(data_2324,features_foul,'AFouls')
+model_cornerH = train_models(data_2324,features_corners,'HCorners')
+model_cornerA = train_models(data_2324,features_corners,'ACorners')
+model_yellowH = train_models(data_2324,features_cartons_jaunes,'HYellow')
+
+model_yellowA = train_models(data_2324,features_cartons_jaunes,'AYellow')
+model_redH = train_models(data_2324,features_cartons_rouges,'HRed')
+
+model_redA = train_models(data_2324,features_cartons_rouges,'ARed')
+"""
 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     if h_team not in data['HomeTeam'].unique():
