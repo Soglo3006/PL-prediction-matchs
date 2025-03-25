@@ -130,7 +130,7 @@ def TeamStats(match_df, data_df,newCol1, newCol2,newCol3,newCol4):
 
 match_2324 = formatDate(match_2324)
 match_2324 = correct_team_names(match_2324)
-TeamStats(match_2324, data_2324,'AwayPossesion', 'HomePossesion','Home_xG','Away_xG')
+
 
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','Home_avgGoal','Away_avgGoal')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','Home_avgShot','Away_avgShot')
@@ -139,6 +139,7 @@ moyenne_stats(data_2324,'HomeTeam','AwayTeam','HCorners','ACorners','Home_avgCor
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HYellow','AYellow','Home_avgYellow','Away_avgYellow')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HRed','ARed','Home_avgRed','Away_avgRed')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HFouls','AFouls','Home_avgFouls','Away_avgFouls')
+TeamStats(match_2324, data_2324,'AwayPossesion', 'HomePossesion','Home_xG','Away_xG')
 
 print(data_2324[0:30])
 
