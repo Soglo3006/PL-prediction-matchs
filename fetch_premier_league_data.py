@@ -115,19 +115,22 @@ def correct_team_names(match_df):
 
     return match_df
 
-def TeamPossesion(match_df, data_df,newCol1, newCol2):
+def TeamStats(match_df, data_df,newCol1, newCol2,newCol3,newCol4):
     for k in range(len(match_df)):
         for h in range(len(data_df)):
             if match_df.loc[k, 'Date'] == data_df.loc[h, 'Date']:
                 if match_df.loc[k, 'Opponent'] == data_df.loc[h, 'HomeTeam']:
                     data_df.loc[h, newCol2] = 100 - match_df.loc[k, 'Poss']
                     data_df.loc[h, newCol1] = 100 - data_df.loc[h, newCol2]
+                    data_df.loc[h,newCol3] = match_df.loc[k,'xGA']
+                    data_df.loc[h,newCol4] = match_df.loc[k,'xG']
     
     return data_df
 
 
 match_2324 = formatDate(match_2324)
 match_2324 = correct_team_names(match_2324)
+TeamStats(match_2324, data_2324,'AwayPossesion', 'HomePossesion','Home_xG','Away_xG')
 
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeGoal','AwayGoal','Home_avgGoal','Away_avgGoal')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomeShots','AwayShots','Home_avgShot','Away_avgShot')
@@ -138,7 +141,7 @@ moyenne_stats(data_2324,'HomeTeam','AwayTeam','HRed','ARed','Home_avgRed','Away_
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HFouls','AFouls','Home_avgFouls','Away_avgFouls')
 
 
-print(data_2324[0:30])
+#print(data_2324[0:30])
 
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
@@ -148,7 +151,7 @@ moyenne_ext_but = moyenne_stats_buts(data_2324,'AwayTeam','AwayGoal','moyenne_ex
 moyenne_con_but_dom = moyenne_stats_buts(data_2324,'HomeTeam','AwayGoal','moyenne_conceder_dom')
 moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenne_conceder_ext')
 
-data_2324 = TeamPossesion(match_2324, data_2324,'AwayPossesion', 'HomePossesion')
+
 
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion','Home_avgPos','Away_avgPos')
 
