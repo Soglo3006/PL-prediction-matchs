@@ -1,38 +1,15 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier, GradientBoostingRegressor
 import numpy as np
 import simpy 
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from détails_simulation import match_process
 import matplotlib.pyplot as plt
 from features import features_match,features_possession,features_tirs,features_tirsCadre
+from model import model_home,model_away,model_possession,model_tirsH,model_tirsA,model_tirsCadreH,model_tirsCadreA
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
 difference_buts(data_2324,moyenne_con_but_dom,moyenne_con_but_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
-
-def train_models(data, features, teamCategorie):
-    X = data[features]
-    y_home = data[teamCategorie]
-    X_train, X_test, y_train, y_test = train_test_split(X, y_home, test_size=0.2, random_state=1)
-    if teamCategorie == 'HomeGoal' or teamCategorie == 'AwayGoal':
-        model = RandomForestClassifier(n_estimators=500, max_depth=7, random_state=1)
-        model.fit(X_train, y_train)
-    elif teamCategorie == 'HomePossesion' or teamCategorie == 'HomeShots' or teamCategorie == 'AwayShots' or teamCategorie == 'HomeShotTarget' or teamCategorie == 'AwayShotTarget':
-        model = RandomForestRegressor(n_estimators=1500, max_depth=15, min_samples_split=10, random_state=1)
-        model.fit(X_train, y_train)
-
-    return model
-
-model_home = train_models(data_2324, features_match, 'HomeGoal')
-model_away = train_models(data_2324, features_match, 'AwayGoal')
-model_possession = train_models(data_2324,features_possession, 'HomePossesion')
-model_tirsH = train_models(data_2324,features_tirs,'HomeShots')
-model_tirsA = train_models(data_2324,features_tirs,'AwayShots')
-model_tirsCadreH = train_models(data_2324,features_tirsCadre,'HomeShotTarget')
-model_tirsCadreA = train_models(data_2324,features_tirsCadre,'AwayShotTarget')
-
 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     if h_team not in data['HomeTeam'].unique():

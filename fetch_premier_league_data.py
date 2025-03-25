@@ -3,7 +3,7 @@ import pandas as pd
 data_2324 = pd.read_csv('season-2324.csv')
 match_2324 = pd.read_csv('matches-23-24.csv')
 
-def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol ):
+def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol):
     equipe = {}
     for i in data[h_team].unique():
         equipe[i] = 0 
@@ -140,8 +140,7 @@ moyenne_stats(data_2324,'HomeTeam','AwayTeam','HYellow','AYellow','Home_avgYello
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HRed','ARed','Home_avgRed','Away_avgRed')
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HFouls','AFouls','Home_avgFouls','Away_avgFouls')
 
-
-#print(data_2324[0:30])
+print(data_2324[0:30])
 
 data_2324 = calculate_form(data_2324, 'HomeTeam', 'FullTimeResult', 'home_form')
 data_2324 = calculate_form(data_2324, 'AwayTeam', 'FullTimeResult', 'away_form')
