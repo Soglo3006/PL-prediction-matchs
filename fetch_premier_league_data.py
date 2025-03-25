@@ -157,3 +157,4 @@ moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion','H
 
 #print(data_2324[0:30])
 
+#Ajouter Moyenne xG et XGA 

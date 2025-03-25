@@ -1,12 +1,12 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier, GradientBoostingRegressor
 import numpy as np
 import simpy 
 from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but, data_2324
 from détails_simulation import match_process
 import matplotlib.pyplot as plt
-from features import features_match,features_possession,features_tirs
+from features import features_match,features_possession,features_tirs,features_tirsCadre
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
@@ -19,7 +19,7 @@ def train_models(data, features, teamCategorie):
     if teamCategorie == 'HomeGoal' or teamCategorie == 'AwayGoal':
         model = RandomForestClassifier(n_estimators=500, max_depth=7, random_state=1)
         model.fit(X_train, y_train)
-    elif teamCategorie == 'HomePossesion' or teamCategorie == 'HomeShots' or teamCategorie == 'AwayShots':
+    elif teamCategorie == 'HomePossesion' or teamCategorie == 'HomeShots' or teamCategorie == 'AwayShots' or teamCategorie == 'HomeShotTarget' or teamCategorie == 'AwayShotTarget':
         model = RandomForestRegressor(n_estimators=1500, max_depth=15, min_samples_split=10, random_state=1)
         model.fit(X_train, y_train)
 
@@ -30,6 +30,8 @@ model_away = train_models(data_2324, features_match, 'AwayGoal')
 model_possession = train_models(data_2324,features_possession, 'HomePossesion')
 model_tirsH = train_models(data_2324,features_tirs,'HomeShots')
 model_tirsA = train_models(data_2324,features_tirs,'AwayShots')
+model_tirsCadreH = train_models(data_2324,features_tirsCadre,'HomeShotTarget')
+model_tirsCadreA = train_models(data_2324,features_tirsCadre,'AwayShotTarget')
 
 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
@@ -102,7 +104,7 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     prediction_tirs_domicile += np.random.normal(loc=0, scale=scale_dynamic)
     prediction_tirs_extérieur += np.random.normal(loc=0, scale=scale_dynamic)
     
-    print(prediction_tirs_domicile,prediction_tirs_extérieur)
+    print(round(prediction_tirs_domicile),round(prediction_tirs_extérieur))
     
     env = simpy.Environment()
     match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur,home_possesion,away_possession))
