@@ -1,6 +1,6 @@
 import pandas as pd
 
-data_joueur_stats = pd.read_csv('premier-player-23-24.csv')
+data_joueur_stats = pd.read_csv('fichier csv/premier-player-23-24.csv')
 
 def AjoutStats(data):
     data['PlayerID'] = data['Player'].astype("category").cat.codes

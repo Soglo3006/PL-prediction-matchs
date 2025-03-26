@@ -1,7 +1,7 @@
 import pandas as pd
 
-data_2324 = pd.read_csv('season-2324.csv')
-match_2324 = pd.read_csv('matches-23-24.csv')
+data_2324 = pd.read_csv('fichier csv/season-2324.csv')
+match_2324 = pd.read_csv('fichier csv/matches-23-24.csv')
 
 def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,h_newCol,a_newCol):
     equipe = {}

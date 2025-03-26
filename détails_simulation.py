@@ -44,6 +44,8 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
                 passeur_away.append((passeur, minute_but))
     buteurs_home = sorted(buteurs_home,key =lambda x:x[1])
     buteurs_away = sorted(buteurs_away,key = lambda x:x[1])
+    passeur_home = sorted(passeur_home,key = lambda x:x[1])
+    passeur_away = sorted(passeur_away,key = lambda x:x[1])
     return buteurs_home, buteurs_away, passeur_home, passeur_away
 
 
@@ -57,5 +59,4 @@ def simulate_match(h_team, a_team, prediction_buts_domicile, prediction_buts_ext
     return buteurs_home,buteurs_away,passeur_home,passeur_away
 
 #2 Ajout de carton jaunes sur les joueurs
-#3 Ajout des assits des buts
-#4 Ajoute de remplacant dans la simulation
+#3 Ajoute de remplacant dans la simulation
