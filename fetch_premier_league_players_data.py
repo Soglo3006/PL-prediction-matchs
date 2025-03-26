@@ -66,7 +66,7 @@ def data_team_effectif(data):
         Starting11EachTeam[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
         BenchPlayers[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(Starting11EachTeam[i])).reset_index(drop=True)
 
-    features_players = ['Player','Team','Pos','PkTaker','FKTaker','Gls_90','xG_90','xAG_90','GoalsPerGames','Buts','PlayerID','TeamID']
+    features_players = ['Player','Team','Pos','PkTaker','FKTaker','Gls_90','Ast_90','xG_90','xAG_90','GoalsPerGames','Buts','PlayerID','TeamID']
     for i in data['Team'].unique():
         dataJoueur[i] = {
             'Starting11Players' : Starting11EachTeam[i][features_players],

@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
-import simpy 
-from détails_simulation import match_process
+from détails_simulation import simulate_match
 from fetch_premier_league_data import avantageDomicile, difference_buts,moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but,data_2324
 from features import features_match,features_possession,features_tirs,features_tirsCadre, features_cartons_jaunes,features_cartons_rouges,features_corners,features_foul,features_xG
 from model import train_models
@@ -65,15 +64,6 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     print(round(prediction_tirs_cadre_domicile),round(prediction_tirs_cadre_extérieur))
     
     return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur
-
-def simulate_match(h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession):
-    env = simpy.Environment()
-    match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession))
-    
-    env.run()
-    buteurs_home, buteurs_away = match_result.value 
-
-    return buteurs_home, buteurs_away 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     if h_team not in data['HomeTeam'].unique():
         return None
@@ -125,6 +115,6 @@ def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     home_possession, away_possession, prediction_buts_domicile, prediction_buts_extérieur = predict_match_stats(
     model_1, model_2, model_3, possesion_features, match_features, tirs_features, tirsCadres_features
     )
-    buteurs_home,buteurs_away = simulate_match(h_team,a_team,prediction_buts_domicile,prediction_buts_extérieur,home_possession,away_possession)
+    buteurs_home,buteurs_away,passeur_home, passeur_away = simulate_match(h_team,a_team,prediction_buts_domicile,prediction_buts_extérieur,home_possession,away_possession)
     
-    return prediction_buts_domicile,prediction_buts_extérieur,buteurs_home,buteurs_away
+    return prediction_buts_domicile,prediction_buts_extérieur,buteurs_home,buteurs_away,passeur_home, passeur_away
