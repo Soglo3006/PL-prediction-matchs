@@ -28,8 +28,6 @@ model_yellowA = train_models(data_2324,features_cartons_jaunes,'AYellow')
 model_redH = train_models(data_2324,features_cartons_rouges,'HRed')
 model_redA = train_models(data_2324,features_cartons_rouges,'ARed')
 
-
-#1 Ajout des models dans la prediction
 """
 prediction_buts_domicile = (model_buts_dom.predict(match_feature)[0]) + np.random.normal(0, 0.7)
 prediction_buts_extérieur = (model_buts_extérieur.predict(match_feature)[0]) + np.random.normal(0, 0.7)
@@ -45,6 +43,7 @@ prediction_tirs_cadre_extérieur = max(0,round(prediction_tirs_cadre_extérieur)
 """
 def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom,pos_features,match_feature,
                         tirs_stats_features,tirs_cadre_stat_features,yellow_features,red_features,corners_stats_features, fouls_features,XG_features):
+    
     prediction_buts_domicile = (model_buts_dom.predict(match_feature)[0]) + np.random.normal(0, 0.7)
     prediction_buts_extérieur = (model_buts_extérieur.predict(match_feature)[0]) + np.random.normal(0, 0.7)
 
@@ -115,15 +114,18 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     
     print(round(prediction_fouls_domicile),round(prediction_fouls_extérieur))
     
-    prediction_XG_domicile = (model_xGH.predict(XG_features)[0]) + np.random.normal(0, 0.7)
-    prediction_XG_extérieur = (model_xGA.predict(XG_features)[0]) + np.random.normal(0, 0.7)
+    prediction_XG_domicile = safe_xG_prediction(model_xGH, XG_features)
+    prediction_XG_extérieur = safe_xG_prediction(model_xGA, XG_features)
     
-    prediction_XG_domicile = max(0,round(prediction_XG_domicile,2))
-    prediction_XG_extérieur = max(0,round(prediction_XG_extérieur,2))
-    
-    print(round(prediction_XG_domicile),round(prediction_XG_extérieur))
+    print((prediction_XG_domicile),(prediction_XG_extérieur))
     
     return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur
+
+def safe_xG_prediction(model, XG_features):
+    xG = -1  
+    while xG < 0:  
+        xG = model.predict(XG_features)[0] + np.random.normal(0, 0.7)  
+    return round(xG, 2)
 
 def predict_future_match(h_team, a_team, model_1, model_2,model_3,data):
     if h_team not in data['HomeTeam'].unique():
