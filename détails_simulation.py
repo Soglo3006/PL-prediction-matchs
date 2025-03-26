@@ -29,6 +29,9 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
                     minute_but = random.randint(a, b)
                     minutes_prises.add(minute_but)
                     break  
+                while passeur == buteur:
+                    passeur = stats_Dans_Match(data_joueur_predictions_buteurs, home_team, 1, 'Ast_90')
+
                 buteurs_home.append((buteur, minute_but))
                 passeur_home.append((passeur, minute_but))
             elif possession == away_team and score_away < prediction_buts_away:
@@ -40,6 +43,9 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
                     minute_but = random.randint(a, b)
                     minutes_prises.add(minute_but)
                     break 
+                while passeur == buteur:
+                    passeur = stats_Dans_Match(data_joueur_predictions_buteurs, away_team, 1, 'Ast_90')
+
                 buteurs_away.append((buteur, minute_but))
                 passeur_away.append((passeur, minute_but))
     buteurs_home = sorted(buteurs_home,key =lambda x:x[1])
@@ -47,6 +53,9 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
     passeur_home = sorted(passeur_home,key = lambda x:x[1])
     passeur_away = sorted(passeur_away,key = lambda x:x[1])
     return buteurs_home, buteurs_away, passeur_home, passeur_away
+
+
+
 
 
 def simulate_match(h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession):
