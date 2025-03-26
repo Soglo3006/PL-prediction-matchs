@@ -39,7 +39,6 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
     buteurs_away = sorted(buteurs_away,key = lambda x:x[1])
     return buteurs_home, buteurs_away
 
-#Ajout de tirs
-#Ajot de carton 
-#Ajout de corners
-#Ajoute de remplacant dans la simulation
+#2 Ajout de carton jaunes sur les joueurs
+#3 Ajout des assits des buts
+#4 Ajoute de remplacant dans la simulation

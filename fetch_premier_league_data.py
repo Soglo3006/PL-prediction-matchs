@@ -151,5 +151,3 @@ moyenne_con_but_ext = moyenne_stats_buts(data_2324,'AwayTeam','HomeGoal','moyenn
 moyenne_stats(data_2324,'HomeTeam','AwayTeam','HomePossesion','AwayPossesion','Home_avgPos','Away_avgPos')
 
 #print(data_2324[0:30])
-
-#Ajouter Moyenne xG et XGA 

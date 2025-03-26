@@ -2,6 +2,7 @@ from fetch_premier_league_data import avantageDomicile, difference_buts, moyenne
 import matplotlib.pyplot as plt
 from Predict_match import predict_future_match
 from Predict_match import model_home,model_away,model_possession
+import streamlit as st
 
 avantageDomicile(data_2324)
 difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')

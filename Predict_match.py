@@ -30,6 +30,8 @@ model_redH = train_models(data_2324,features_cartons_rouges,'HRed')
 model_redA = train_models(data_2324,features_cartons_rouges,'ARed')
 """
 
+#1 Ajout des models dans la prediction
+
 def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom,pos_features,match_feature,tirs_stats_features,tirs_cadre_stat_features):
     prediction_buts_domicile = (model_buts_dom.predict(match_feature)[0]) + np.random.normal(0, 0.7)
     prediction_buts_extérieur = (model_buts_extérieur.predict(match_feature)[0]) + np.random.normal(0, 0.7)
