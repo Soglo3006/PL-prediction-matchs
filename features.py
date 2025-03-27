@@ -116,11 +116,8 @@ features_xG = [
     'Home_avgShot_Target', 'Away_avgShot_Target', 
     'Home_avgGoal', 'Away_avgGoal',    
     'Home_avgPos', 'Away_avgPos',  
-    'home_form', 'away_form',   
-    'moyenne_conceder_dom', 'moyenne_conceder_ext',   
+    'home_form', 'away_form',      
     'Home_avgCorner', 'Away_avgCorner',   
-    'difference_moyenne_buts_marques',   
-    'difference_moyenne_buts_conceder', 
     'home_advantage'  
 ]
 

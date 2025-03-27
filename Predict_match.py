@@ -114,8 +114,20 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     
     print(round(prediction_fouls_domicile),round(prediction_fouls_extérieur))
     
-    prediction_XG_domicile = round(model_xGH.predict(XG_features)[0],2) 
-    prediction_XG_extérieur = round(model_xGA.predict(XG_features)[0],2)
+    prediction_XG_domicile = model_xGH.predict(XG_features)[0]
+    prediction_XG_extérieur = model_xGA.predict(XG_features)[0]
+    
+    facteur_buts = 0.25  
+    facteur_tirs_cadres = 0.10  
+    
+    prediction_XG_domicile += (prediction_buts_domicile * facteur_buts) + (prediction_tirs_cadre_domicile * facteur_tirs_cadres)
+    prediction_XG_extérieur += (prediction_buts_extérieur * facteur_buts) + (prediction_tirs_cadre_extérieur * facteur_tirs_cadres)
+    
+    prediction_XG_domicile += np.random.normal(0, 0.1)
+    prediction_XG_extérieur += np.random.normal(0, 0.1)
+    
+    prediction_XG_domicile = max(0, round(prediction_XG_domicile, 2))
+    prediction_XG_extérieur = max(0, round(prediction_XG_extérieur, 2))
     
     print((prediction_XG_domicile),(prediction_XG_extérieur))
     
