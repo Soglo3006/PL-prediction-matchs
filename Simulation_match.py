@@ -22,26 +22,3 @@ if h_team != a_team:
         }    
     
     print(f"Prédiction pour {h_team} vs {a_team} : {prediction}")
-
-"""
-# Prédictions sur les données de test
-y_pred_home = model_home.predict(X_test)
-y_pred_away = model_away.predict(W_test)
-
-# Évaluation du modèle pour les buts à domicile
-mae_home = mean_absolute_error(y_test, y_pred_home)
-r2_home = r2_score(y_test, y_pred_home)
-
-# Évaluation du modèle pour les buts à l'extérieur
-mae_away = mean_absolute_error(Z_test, y_pred_away)
-r2_away = r2_score(Z_test, y_pred_away)
-
-# Affichage des résultats
-print(" Évaluation du modèle - Buts domicile")
-print(f"MAE : {mae_home:.2f} (Erreur moyenne absolue)")
-print(f"R² : {r2_home:.2f} (Qualité de prédiction)")
-
-print("\n Évaluation du modèle - Buts extérieur")
-print(f"MAE : {mae_away:.2f} (Erreur moyenne absolue)")
-print(f"R² : {r2_away:.2f} (Qualité de prédiction)")
-"""
