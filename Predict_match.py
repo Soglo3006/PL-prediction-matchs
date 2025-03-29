@@ -83,7 +83,7 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     prediction_carton_jaunes_domicile = max(0,round(prediction_carton_jaunes_domicile))
     prediction_carton_jaunes_extérieur = max(0,round(prediction_carton_jaunes_extérieur))
     
-    print(round(prediction_carton_jaunes_domicile),round(prediction_carton_jaunes_extérieur))
+    print("Cartons jaunes domicile:"f"{round(prediction_carton_jaunes_domicile)}","cartons jaunes exterireur:"f"{round(prediction_carton_jaunes_extérieur)}")
     
     prediction_carton_rouges_domicile = (model_redH.predict(red_features)[0]) + np.random.normal(-0.3, 0.5)
     prediction_carton_rouges_extérieur = (model_redA.predict(red_features)[0]) + np.random.normal(-0.3, 0.5)
@@ -112,7 +112,7 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     prediction_fouls_domicile = max(0,round(prediction_fouls_domicile))
     prediction_fouls_extérieur = max(0,round(prediction_fouls_extérieur))
     
-    print(round(prediction_fouls_domicile),round(prediction_fouls_extérieur))
+    #print(round(prediction_fouls_domicile),round(prediction_fouls_extérieur))
     
     prediction_XG_domicile = model_xGH.predict(XG_features)[0]
     prediction_XG_extérieur = model_xGA.predict(XG_features)[0]
@@ -131,12 +131,11 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     
     print((prediction_XG_domicile),(prediction_XG_extérieur))
     
-    return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur
+    return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur, prediction_fouls_domicile, prediction_fouls_extérieur, prediction_carton_jaunes_domicile, prediction_carton_jaunes_extérieur
 
 def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     
     match_data = create_match_features(h_team, a_team, data)
-    
     
     match_features = pd.DataFrame([[match_data[f] for f in features_match]], columns=features_match)
     possesion_features = pd.DataFrame([[match_data[f] for f in features_possession]], columns=features_possession)
@@ -149,14 +148,13 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     xG_features = pd.DataFrame([[match_data[f] for f in features_xG]], columns=features_xG)
 
     
-    home_possession, away_possession, prediction_buts_domicile, prediction_buts_extérieur = predict_match_stats(
+    home_possession, away_possession, prediction_buts_domicile, prediction_buts_extérieur,Hfouls,Afouls,HYellow,AYellow = predict_match_stats(
         model_1, model_2, model_3, possesion_features, match_features, tirs_features, tirsCadres_features,
         carton_jaunes_features, carton_rouge_features, corners_features, foul_features, xG_features
     )
-
     
     buteurs_home, buteurs_away, passeur_home, passeur_away = simulate_match(
-        h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession
+        h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession,Hfouls,Afouls,HYellow,AYellow
     )
 
     return prediction_buts_domicile, prediction_buts_extérieur, buteurs_home, buteurs_away, passeur_home, passeur_away

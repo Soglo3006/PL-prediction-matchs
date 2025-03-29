@@ -1,8 +1,8 @@
 import random 
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
-def stats_Dans_Match(data2,team, Buts,Col):
-    if Buts == 0:
+def stats_Dans_Match(data2,team, Stats,Col):
+    if Stats == 0:
         return []
     else:
         JoueurTeam = []
@@ -13,7 +13,10 @@ def stats_Dans_Match(data2,team, Buts,Col):
         listWeight = []
         for j in JoueurTeam:
             listWeight.append(float(j[Col]))
-        Buteur = random.choices(JoueurTeam, weights= listWeight, k= Buts)
+        Buteur = random.choices(JoueurTeam, weights= listWeight, k= Stats)
         Buteur[0] = Buteur[0]['Player']
         
     return Buteur
+
+
+print(stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'CrdYAvg'))

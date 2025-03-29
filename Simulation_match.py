@@ -4,10 +4,6 @@ from Predict_match import predict_future_match
 from Predict_match import model_home,model_away,model_possession
 import streamlit as st
 
-avantageDomicile(data_2324)
-difference_buts(data_2324,moyenne_dom_but,moyenne_ext_but,'difference_moyenne_buts_marques', 'difference_plus_fort_equipe_but_marques')
-difference_buts(data_2324,moyenne_con_but_dom,moyenne_con_but_ext, 'difference_moyenne_buts_conceder', 'difference_plus_fort_equipe_but_concede')
-
 h_team = 'Manchester City'
 a_team = 'Wolves'
 if h_team != a_team:

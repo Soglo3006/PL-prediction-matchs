@@ -1,26 +1,38 @@
 from fetch_premier_league_data import moyenne_dom_but,moyenne_ext_but,moyenne_con_but_dom,moyenne_con_but_ext
+
 def create_match_features(h_team, a_team, data):
     home_avg_goal = data[data['HomeTeam'] == h_team]['Home_avgGoal'].values[0]
     away_avg_goal = data[data['AwayTeam'] == a_team]['Away_avgGoal'].values[0]
+    
     home_avg_shot = data[data['HomeTeam'] == h_team]['Home_avgShot'].values[0]
     away_avg_shot = data[data['AwayTeam'] == a_team]['Away_avgShot'].values[0]
+    
     home_avg_shot_target = data[data['HomeTeam'] == h_team]['Home_avgShot_Target'].values[0]
     away_avg_shot_target = data[data['AwayTeam'] == a_team]['Away_avgShot_Target'].values[0]
+    
     home_form = data[data['HomeTeam'] == h_team]['home_form'].values[0]
     away_form = data[data['AwayTeam'] == a_team]['away_form'].values[0]
+    
     home_advantage = data[data['HomeTeam'] == h_team]['home_advantage'].values[0]
+    
     moyenne_domcile_buts = moyenne_dom_but[h_team]
     moyenne_extérieur_buts = moyenne_ext_but[a_team]
+    
     moyenne_conceder_dom = moyenne_con_but_dom[h_team]
     moyenne_conceder_ext = moyenne_con_but_ext[a_team]
+    
     difference_moyenne_buts_marques = moyenne_domcile_buts - moyenne_extérieur_buts
     difference_moyenne_buts_conceder = moyenne_conceder_dom - moyenne_conceder_ext
+    
     Home_avgCorner = data[data['HomeTeam'] == h_team]['Home_avgCorner'].values[0]
     Away_avgCorner = data[data['AwayTeam'] == a_team]['Away_avgCorner'].values[0]
+    
     Home_avgPos = data[data['HomeTeam'] == h_team]['Home_avgPos'].values[0]
     Away_avgPos = data[data['AwayTeam'] == a_team]['Away_avgPos'].values[0]
+    
     Home_avgFouls = data[data['HomeTeam'] == h_team]['Home_avgFouls'].values[0]
     Away_avgFouls = data[data['AwayTeam'] == a_team]['Away_avgFouls'].values[0]
+    
     Home_avgYellow = data[data['HomeTeam']== h_team]['Home_avgYellow'].values[0]
     Away_avgYellow = data[data['AwayTeam']== a_team]['Away_avgYellow'].values[0]
     
