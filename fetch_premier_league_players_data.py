@@ -10,13 +10,21 @@ def AjoutStats(data):
         data.loc[i,'Team'] = data.loc[i,'Team'].strip()
         data.loc[i,'GoalsPerGames'] = round(data.loc[i,'Gls']/data.loc[i,'MP'],2)
         data.loc[i,'Buts'] = 0
-        if data_joueur_stats.loc[i,'CrdY'] == 0.0 and data_joueur_stats.loc[i,'Pos'] == 'GK':
-            data_joueur_stats.loc[i,'CrdYAvg'] = 0.0
-        elif data_joueur_stats.loc[i,'CrdY'] == 0.0:
-            data_joueur_stats.loc[i,'CrdYAvg'] = 0.04
+        if data.loc[i,'CrdY'] == 0.0 and data.loc[i,'Pos'] == 'GK':
+            data.loc[i,'CrdYAvg'] = 0.0
+        elif data.loc[i,'CrdY'] == 0.0:
+            data.loc[i,'CrdYAvg'] = 0.04
         else:
-            data_joueur_stats.loc[i,'CrdYAvg'] = data_joueur_stats.loc[i,'CrdY']/50
-
+            data.loc[i,'CrdYAvg'] = data.loc[i,'CrdY']/50
+            
+        if data.loc[i,'Pos'] == 'GK':
+            data.loc[i,'CrdRPro'] = 0.0
+        elif data.loc[i,'Pos'] == 'DF' or data.loc[i,'Pos'] == 'DF,MF' or data.loc[i,'Pos']== 'DF,FW':
+            data.loc[i,'CrdRPro'] = 0.02
+        elif data.loc[i,'Pos'] == 'MF' or data.loc[i,'Pos'] == 'MF,DF' or data.loc[i,'Pos'] == 'MF,FW':
+            data.loc[i,'CrdRPro'] = 0.015
+        elif data.loc[i,'Pos'] == 'FW' or data.loc[i,'Pos'] == 'FW,DF' or data.loc[i,'Pos'] == 'FW,MF':
+            data.loc[i,'CrdRPro'] = 0.005
     return data
 
 def penalty_taker(data):
@@ -72,13 +80,15 @@ def data_team_effectif(data):
         Starting11EachTeam[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
         BenchPlayers[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(Starting11EachTeam[i])).reset_index(drop=True)
 
-    features_players = ['Player','Team','Pos','PkTaker','FKTaker','Gls_90','Ast_90','xG_90','xAG_90','GoalsPerGames','CrdY','CrdYAvg','PlayerID','TeamID']
+    features_players = ['Player','Team','Pos','PkTaker','FKTaker','Gls_90','Ast_90','xG_90','xAG_90','GoalsPerGames','CrdY','CrdYAvg','CrdRPro','PlayerID','TeamID']
     for i in data['Team'].unique():
         dataJoueur[i] = {
             'Starting11Players' : Starting11EachTeam[i][features_players],
             'BenchPlayers' : BenchPlayers[i][features_players]
         }
     return dataJoueur
+
+
 
 #print(data_joueur_stats.loc[0:21,['Player','Team','Pos','Gls_90','Ast_90','xG_90','xAG_90','CrdY']])
 data_joueur_stats = AjoutStats(data_joueur_stats)
@@ -87,4 +97,4 @@ valeur_takers(data_joueur_stats)
 data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
 
 
-#print(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])
+print(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])

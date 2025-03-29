@@ -19,4 +19,4 @@ def stats_Dans_Match(data2,team, Stats,Col):
     return Buteur
 
 
-print(stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'CrdYAvg'))
+print(stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'CrdRPro'))

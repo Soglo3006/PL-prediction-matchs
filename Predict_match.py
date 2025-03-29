@@ -131,7 +131,7 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     
     print((prediction_XG_domicile),(prediction_XG_extérieur))
     
-    return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur, prediction_fouls_domicile, prediction_fouls_extérieur, prediction_carton_jaunes_domicile, prediction_carton_jaunes_extérieur
+    return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur, prediction_fouls_domicile, prediction_fouls_extérieur, prediction_carton_jaunes_domicile, prediction_carton_jaunes_extérieur, prediction_carton_rouges_domicile, prediction_carton_rouges_extérieur
 
 def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     
@@ -148,13 +148,13 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     xG_features = pd.DataFrame([[match_data[f] for f in features_xG]], columns=features_xG)
 
     
-    home_possession, away_possession, prediction_buts_domicile, prediction_buts_extérieur,Hfouls,Afouls,HYellow,AYellow = predict_match_stats(
+    home_possession, away_possession, prediction_buts_domicile, prediction_buts_extérieur,Hfouls,Afouls,HYellow,AYellow,HRed, ARed = predict_match_stats(
         model_1, model_2, model_3, possesion_features, match_features, tirs_features, tirsCadres_features,
         carton_jaunes_features, carton_rouge_features, corners_features, foul_features, xG_features
     )
     
-    buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players  = simulate_match(
-        h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession,Hfouls,Afouls,HYellow,AYellow
+    buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players,red_home_players, red_away_players  = simulate_match(
+        h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession,Hfouls,Afouls,HYellow,AYellow,HRed,ARed
     )
 
-    return prediction_buts_domicile, prediction_buts_extérieur, buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players 
+    return prediction_buts_domicile, prediction_buts_extérieur, buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players, red_home_players, red_away_players
