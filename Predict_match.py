@@ -153,8 +153,8 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
         carton_jaunes_features, carton_rouge_features, corners_features, foul_features, xG_features
     )
     
-    buteurs_home, buteurs_away, passeur_home, passeur_away = simulate_match(
+    buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players  = simulate_match(
         h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession,Hfouls,Afouls,HYellow,AYellow
     )
 
-    return prediction_buts_domicile, prediction_buts_extérieur, buteurs_home, buteurs_away, passeur_home, passeur_away
+    return prediction_buts_domicile, prediction_buts_extérieur, buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players 

@@ -87,4 +87,4 @@ valeur_takers(data_joueur_stats)
 data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
 
 
-print(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])
+#print(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])

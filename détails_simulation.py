@@ -13,6 +13,8 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
     passeur_away = []
     yellow_home = 0
     yellow_away = 0
+    yellow_home_players = []
+    yellow_away_players = []
     score_fouls_home = 0
     score_fouls_away = 0
     minutes_prises = set()
@@ -25,21 +27,20 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
         possession = random.choices([home_team, away_team], weights=[HomePossesion/100,AwayPossesion/100])[0]
         totalFouls = Hfouls + Afouls
         fautes = random.choices([home_team, away_team], weights=[Hfouls/(totalFouls),Afouls/totalFouls])[0]
-        if random.random() < 0.1:
-            if fautes == home_team and score_fouls_home < Hfouls:
-                score_fouls_home += 1
+        if fautes == home_team:
+            if random.random() < HYellow/Hfouls and yellow_home < HYellow:
+                yellow_home += 1
+                Joueur_carton_jaune = stats_Dans_Match(data_joueur_predictions_buteurs,home_team,1,'CrdYAvg')
                 a,b = random.choices(minutes_intervalles,weights=probabilites_minutes)[0]
                 minutes_fautes = random.randint(a, b)
-                if random.random() < 0.2 and yellow_home < HYellow:
-                    yellow_home += 1
-                    Joueur_carton_jaune = stats_Dans_Match(data_joueur_predictions_buteurs,home_team,1,'CrdYAvg')
-            elif fautes == away_team and score_fouls_away < Hfouls:
-                score_fouls_away += 1
+                yellow_home_players.append((Joueur_carton_jaune,minutes_fautes))
+        else:
+            if random.random() < AYellow/Afouls and yellow_away < AYellow:
+                yellow_away += 1
+                Joueur_carton_jaune = stats_Dans_Match(data_joueur_predictions_buteurs,away_team,1,'CrdYAvg')
                 a,b = random.choices(minutes_intervalles,weights=probabilites_minutes)[0]
                 minutes_fautes = random.randint(a, b)
-                if random.random() < 0.2 and yellow_away < AYellow:
-                    yellow_away += 1
-                    Joueur_carton_jaune = stats_Dans_Match(data_joueur_predictions_buteurs,away_team,1,'CrdYAvg')
+                yellow_away_players.append((Joueur_carton_jaune,minutes_fautes))
         
         if random.random() < 0.2:  
             if possession == home_team and score_home < prediction_buts_home:
@@ -69,8 +70,10 @@ def match_process(env, home_team, away_team, prediction_buts_home, prediction_bu
     buteurs_away = sorted(buteurs_away,key = lambda x:x[1])
     passeur_home = sorted(passeur_home,key = lambda x:x[1])
     passeur_away = sorted(passeur_away,key = lambda x:x[1])
+    yellow_home_players = sorted(yellow_home_players, key = lambda x:x[1])
+    yellow_away_players = sorted(yellow_away_players, key = lambda x:x[1])
     
-    return buteurs_home, buteurs_away, passeur_home, passeur_away
+    return buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players
 
 
 
@@ -81,9 +84,9 @@ def simulate_match(h_team, a_team, prediction_buts_domicile, prediction_buts_ext
     match_result = env.process(match_process(env, h_team, a_team, prediction_buts_domicile, prediction_buts_extérieur, home_possession, away_possession,Hfouls,Afouls,HYellow,AYellow))
     
     env.run()
-    buteurs_home,buteurs_away,passeur_home, passeur_away = match_result.value 
+    buteurs_home,buteurs_away,passeur_home, passeur_away, yellow_home_players, yellow_away_players  = match_result.value 
 
-    return buteurs_home,buteurs_away,passeur_home,passeur_away
+    return buteurs_home,buteurs_away,passeur_home,passeur_away, yellow_home_players, yellow_away_players 
 
 #2 Ajout de carton jaunes sur les joueurs
 #3 Ajoute de remplacant dans la simulation
