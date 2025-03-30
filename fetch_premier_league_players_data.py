@@ -108,39 +108,35 @@ top_scorers = find_top_scorer(penalty_taker(data_joueur_stats))
 valeur_takers(data_joueur_stats)
 data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
 
+def probabilité_changement(data1,data2):
+    for k in data1['Team'].unique():
+        max_game_benchPlayers = data2[k]['BenchPlayers']['MP'].max()
+        for i in range(len(data2[k]['BenchPlayers'])):
+            if data2[k]['BenchPlayers'].loc[i,'FirstPos'] == 'FW' or data2[k]['BenchPlayers'].loc[i,'SecondPos'] == 'FW':
+                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.65
+            elif data2[k]['BenchPlayers'].loc[i,'FirstPos'] == 'MF':
+                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.45
+            elif data2[k]['BenchPlayers'].loc[i,'FirstPos'] == 'DF':
+                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.20
+            else:
+                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.0
+                
+            data2[k]['BenchPlayers'].loc[i,'ProbMP'] = round(data2[k]['BenchPlayers'].loc[i,'MP'] / max_game_benchPlayers,2)
 
-max_game_benchPlayers = data_joueur_predictions_buteurs['Manchester City']['BenchPlayers']['MP'].max()
+            data2[k]['BenchPlayers'].loc[i,'ProbFinal'] = round(data2[k]['BenchPlayers'].loc[i,'ProbMP'] * data2[k]['BenchPlayers'].loc[i,'ProbPos'],2)
+            
+            if data2[k]['BenchPlayers'].loc[i,'MP'] < 10:
+                data2[k]['BenchPlayers'].loc[i,'ProbFinal'] = 0
 
-for i in range(len(data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'])):
-    if data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'FirstPos'] == 'FW' or data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'SecondPos'] == 'FW':
-        data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbPos'] = 0.65
-    elif data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'FirstPos'] == 'MF':
-        data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbPos'] = 0.45
-    elif data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'FirstPos'] == 'DF':
-        data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbPos'] = 0.20
-    else:
-        data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbPos'] = 0.0
-        
-    data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbMP'] = round(data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'MP'] / max_game_benchPlayers,2)
+        for i in range(len(data2[k]['Starting11Players'])):
+            if data2[k]['Starting11Players'].loc[i,'FirstPos'] == 'FW' or data2[k]['Starting11Players'].loc[i,'SecondPos'] == 'FW':
+                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.60
+            elif data2[k]['Starting11Players'].loc[i,'FirstPos'] == 'MF':
+                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.50
+            elif data2[k]['Starting11Players'].loc[i,'FirstPos'] == 'DF':
+                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.30
+            else:
+                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.0
 
-    data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbFinal'] = round(data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbMP'] * data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbPos'],2)
-    
-    if data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'MP'] < 10:
-        data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[i,'ProbFinal'] = 0
-        
-        
-        
-for i in range(len(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])):
-    if data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'FirstPos'] == 'FW' or data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'SecondPos'] == 'FW':
-        data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'ProbOut'] = 0.60
-    elif data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'FirstPos'] == 'MF':
-        data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'ProbOut'] = 0.50
-    elif data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'FirstPos'] == 'DF':
-        data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'ProbOut'] = 0.30
-    else:
-        data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'ProbOut'] = 0.0
-    
-        
-#print(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])
-#print(data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'])
+probabilité_changement(data_joueur_stats, data_joueur_predictions_buteurs)
 print(data_joueur_predictions_buteurs['Manchester City'])

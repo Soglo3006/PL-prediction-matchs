@@ -17,9 +17,34 @@ def stats_Dans_Match(data2,team, Stats,nameCol,Col):
         if Col == 'ProbOut' or Col == 'ProbFinal':
             Buteur = {j['Player']: {'FirstPos': j['FirstPos'], 'SecondPos': j['SecondPos']} for j in Buteur}
         else:
-            Buteur = Buteur[0]['Player']
+            Buteur = Buteur[0]
     return Buteur
 
-print(stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'Starting11Players','Gls_90'))
-print(stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'Starting11Players','ProbOut'))
-print(stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'BenchPlayers','ProbFinal'))
+#print(stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'Starting11Players','Gls_90'))
+SPlayer = (stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'Starting11Players','ProbOut'))
+BPlayer = (stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'BenchPlayers','ProbFinal'))
+
+SPlayer_name = list(SPlayer.keys())[0]
+
+BPlayer_name = list(BPlayer.keys())[0]
+while SPlayer[SPlayer_name]['FirstPos'] not in (BPlayer[BPlayer_name]['FirstPos'], BPlayer[BPlayer_name]['SecondPos']):
+    SPlayer = (stats_Dans_Match(data_joueur_predictions_buteurs,'Manchester City',1,'Starting11Players','ProbOut'))
+    SPlayer_name = list(SPlayer.keys())[0]
+
+Joueur_change = []
+for i in range(len(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'])):
+    if data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i,'Player'] == SPlayer_name:
+        for j in range(len(data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'])):
+            if data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[j,'Player'] == BPlayer_name:
+                Joueur_change.append(data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i])
+                data_joueur_predictions_buteurs['Manchester City']['Starting11Players'].loc[i] = data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].loc[j].copy()
+                data_joueur_predictions_buteurs['Manchester City']['BenchPlayers'].drop(j,inplace=True)
+                break
+print(SPlayer)
+print(BPlayer)
+print(data_joueur_predictions_buteurs['Manchester City'])
+print(Joueur_change)
+
+
+
+    
