@@ -56,7 +56,7 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     home_possesion = round(prediction_possession)
     away_possession = 100 - home_possesion
     
-    print(home_possesion,away_possession)
+    print("Possesion domicile:"f"{home_possesion}","Possesion exterireur:"f"{away_possession}")
 
     prediction_tirs_domicile = (model_tirsH.predict(tirs_stats_features)[0])
     prediction_tirs_extérieur = (model_tirsA.predict(tirs_stats_features)[0])
@@ -66,16 +66,17 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
 
     prediction_tirs_domicile += np.random.normal(loc=0, scale=scale_dynamic)
     prediction_tirs_extérieur += np.random.normal(loc=0, scale=scale_dynamic)
-
-    print(round(prediction_tirs_domicile),round(prediction_tirs_extérieur))
+    
+    print("tirs domicile:"f"{round(prediction_tirs_domicile)}","tirs exterireur:"f"{round(prediction_tirs_extérieur)}")
 
     prediction_tirs_cadre_domicile = (model_tirsCadreH.predict(tirs_cadre_stat_features)[0]) + np.random.normal(0, 0.7)
     prediction_tirs_cadre_extérieur = (model_tirsCadreA.predict(tirs_cadre_stat_features)[0]) + np.random.normal(0, 0.7)
 
     prediction_tirs_cadre_domicile = min(prediction_tirs_domicile, max(0, round(prediction_tirs_cadre_domicile)))
     prediction_tirs_cadre_extérieur = min(prediction_tirs_extérieur, max(0, round(prediction_tirs_cadre_extérieur)))
-
-    print(round(prediction_tirs_cadre_domicile),round(prediction_tirs_cadre_extérieur))
+    
+    print("tirs cadre domicile:"f"{round(prediction_tirs_cadre_domicile)}","tirs cadres exterireur:"f"{round(prediction_tirs_cadre_extérieur)}")
+    
     
     prediction_carton_jaunes_domicile = (model_yellowH.predict(yellow_features)[0]) + np.random.normal(0, 0.7)
     prediction_carton_jaunes_extérieur = (model_yellowA.predict(yellow_features)[0]) + np.random.normal(0, 0.7)
@@ -96,7 +97,7 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     prediction_carton_rouges_domicile = min(1, max(0, round(prediction_carton_rouges_domicile)))
     prediction_carton_rouges_extérieur = min(1, max(0, round(prediction_carton_rouges_extérieur)))
     
-    print((prediction_carton_rouges_domicile),(prediction_carton_rouges_extérieur))
+    print("Cartons rouges domicile:"f"{prediction_carton_rouges_domicile}","cartons rouges exterireur:"f"{prediction_carton_rouges_extérieur}")
     
     prediction_corner_domicile = (model_cornerH.predict(corners_stats_features)[0]) + np.random.normal(0, 0.7)
     prediction_corner_extérieur = (model_cornerA.predict(corners_stats_features)[0]) + np.random.normal(0, 0.7)
@@ -104,7 +105,7 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     prediction_corner_domicile = max(0,round(prediction_corner_domicile))
     prediction_corner_extérieur = max(0,round(prediction_corner_extérieur))
     
-    print(round(prediction_corner_domicile),round(prediction_corner_extérieur))
+    print("Corners domicile:"f"{round(prediction_corner_domicile)}","Corners exterireur:"f"{round(prediction_corner_extérieur)}")
     
     prediction_fouls_domicile = (model_foulH.predict(fouls_features)[0]) + np.random.normal(0, 0.7)
     prediction_fouls_extérieur = (model_foulA.predict(fouls_features)[0]) + np.random.normal(0, 0.7)
@@ -112,7 +113,8 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     prediction_fouls_domicile = max(0,round(prediction_fouls_domicile))
     prediction_fouls_extérieur = max(0,round(prediction_fouls_extérieur))
     
-    #print(round(prediction_fouls_domicile),round(prediction_fouls_extérieur))
+    print("Fautes domicile:"f"{round(prediction_fouls_domicile)}","Fautes exterireur:"f"{round(prediction_fouls_extérieur)}")
+
     
     prediction_XG_domicile = model_xGH.predict(XG_features)[0]
     prediction_XG_extérieur = model_xGA.predict(XG_features)[0]
