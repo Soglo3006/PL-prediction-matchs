@@ -139,4 +139,4 @@ def probabilité_changement(data1,data2):
                 data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.0
 
 probabilité_changement(data_joueur_stats, data_joueur_predictions_buteurs)
-print(data_joueur_predictions_buteurs['Manchester City'])
+#print(data_joueur_predictions_buteurs['Manchester City'])
