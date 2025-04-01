@@ -69,8 +69,6 @@ def simulate_match(home_team,away_team,prediction_buts_domicile, prediction_buts
     carton_rouges_away = ARed
     home_team_liste.append(data_joueur_predictions_buteurs[home_team])
     away_team_liste.append(data_joueur_predictions_buteurs[away_team])
-    prediction_buts_domicile = 3
-    prediction_buts_extérieur = 1
 
     minutes_buts_home = []
     minutes_changement_home = []
