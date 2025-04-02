@@ -9,7 +9,7 @@ h_team = str(random.choice(data_2324['HomeTeam'].unique()))
 a_team = str(random.choice(data_2324['AwayTeam'].unique()))
 if h_team != a_team:
     predicted_result = predict_future_match(h_team, a_team, model_home, model_away,model_possession, data_2324)
-    prediction_buts_domicile,prediction_buts_extérieur,buteurs_home,buteurs_away,passeur_home, passeur_away, yellow_home_players, yellow_away_players , red_home_players, red_away_players, Joueur_remplacer_home, Joueur_remplacer_away, Joueur_rentre_home, Joueur_rentre_away = predicted_result
+    prediction_buts_domicile,prediction_buts_extérieur,buteurs_home,buteurs_away,passeur_home, passeur_away, yellow_home_players, yellow_away_players , red_home_players, red_away_players, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away = predicted_result
     prediction = {
             "score": f"{prediction_buts_domicile} - {prediction_buts_extérieur}",
             "buteurs_home": buteurs_home,
@@ -19,7 +19,11 @@ if h_team != a_team:
             " yellow_home_players":  yellow_home_players, 
             "yellow_away_players ":  yellow_away_players,
             "red_home_players": red_home_players,
-            "red_away_players" : red_away_players
+            "red_away_players" : red_away_players,
+            "joueur_remplacer_home": joueur_remplacer_home,
+            "joueur_remplacer_away": joueur_remplacer_away,
+            "joueur_rentre_home": joueur_rentre_home,
+            "joueur_rentre_away": joueur_rentre_away
         }    
     
     print(f"Prédiction pour {h_team} vs {a_team} : {prediction}")
