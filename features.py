@@ -16,25 +16,25 @@ def create_match_features(h_team, a_team, data):
     home_advantage = data[data['HomeTeam'] == h_team]['home_advantage'].values[0]
     
     moyenne_domcile_buts = moyenne_dom_but[h_team]
-    moyenne_extérieur_buts = moyenne_ext_but[a_team]
+    moyenne_exterieur_buts = moyenne_ext_but[a_team]
     
     moyenne_conceder_dom = moyenne_con_but_dom[h_team]
     moyenne_conceder_ext = moyenne_con_but_ext[a_team]
     
-    difference_moyenne_buts_marques = moyenne_domcile_buts - moyenne_extérieur_buts
+    difference_moyenne_buts_marques = moyenne_domcile_buts - moyenne_exterieur_buts
     difference_moyenne_buts_conceder = moyenne_conceder_dom - moyenne_conceder_ext
     
-    Home_avgCorner = data[data['HomeTeam'] == h_team]['Home_avgCorner'].values[0]
-    Away_avgCorner = data[data['AwayTeam'] == a_team]['Away_avgCorner'].values[0]
+    home_avg_corner = data[data['HomeTeam'] == h_team]['Home_avgCorner'].values[0]
+    away_avg_corner = data[data['AwayTeam'] == a_team]['Away_avgCorner'].values[0]
     
-    Home_avgPos = data[data['HomeTeam'] == h_team]['Home_avgPos'].values[0]
-    Away_avgPos = data[data['AwayTeam'] == a_team]['Away_avgPos'].values[0]
+    home_avg_pos = data[data['HomeTeam'] == h_team]['Home_avgPos'].values[0]
+    away_avg_pos = data[data['AwayTeam'] == a_team]['Away_avgPos'].values[0]
     
-    Home_avgFouls = data[data['HomeTeam'] == h_team]['Home_avgFouls'].values[0]
-    Away_avgFouls = data[data['AwayTeam'] == a_team]['Away_avgFouls'].values[0]
+    home_avg_fouls = data[data['HomeTeam'] == h_team]['Home_avgFouls'].values[0]
+    away_avg_fouls = data[data['AwayTeam'] == a_team]['Away_avgFouls'].values[0]
     
-    Home_avgYellow = data[data['HomeTeam']== h_team]['Home_avgYellow'].values[0]
-    Away_avgYellow = data[data['AwayTeam']== a_team]['Away_avgYellow'].values[0]
+    home_avg_yellow = data[data['HomeTeam']== h_team]['Home_avgYellow'].values[0]
+    away_avg_yellow = data[data['AwayTeam']== a_team]['Away_avgYellow'].values[0]
     
     match_data = {
         "Home_avgGoal": home_avg_goal, "Away_avgGoal": away_avg_goal,
@@ -43,15 +43,15 @@ def create_match_features(h_team, a_team, data):
         "home_form": home_form, "away_form": away_form,
         "home_advantage": home_advantage,
         "moyenne_conceder_dom": moyenne_conceder_dom, "moyenne_conceder_ext": moyenne_conceder_ext,
-        "Home_avgCorner": Home_avgCorner, "Away_avgCorner": Away_avgCorner,
-        "Home_avgPos": Home_avgPos, "Away_avgPos": Away_avgPos,
-        "Home_avgFouls": Home_avgFouls, "Away_avgFouls": Away_avgFouls,
+        "Home_avgCorner": home_avg_corner, "Away_avgCorner": away_avg_corner,
+        "Home_avgPos": home_avg_pos, "Away_avgPos": away_avg_pos,
+        "Home_avgFouls": home_avg_fouls, "Away_avgFouls": away_avg_fouls,
         "difference_moyenne_buts_marques": difference_moyenne_buts_marques,
         "difference_moyenne_buts_conceder": difference_moyenne_buts_conceder,
         "moyenne_domcile_buts": moyenne_domcile_buts ,
-        "moyenne_exterieur_buts": moyenne_extérieur_buts,
-        "Home_avgYellow": Home_avgYellow,
-        "Away_avgYellow": Away_avgYellow,
+        "moyenne_exterieur_buts": moyenne_exterieur_buts,
+        "Home_avgYellow": home_avg_yellow,
+        "Away_avgYellow": away_avg_yellow,
     }
 
     return match_data
