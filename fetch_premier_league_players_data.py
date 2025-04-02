@@ -2,7 +2,7 @@ import pandas as pd
 
 data_joueur_stats = pd.read_csv('fichier csv/premier-player-23-24.csv')
 
-def AjoutStats(data):
+def ajout_stats(data):
     data['PlayerID'] = data['Player'].astype("category").cat.codes
     data['TeamID'] = data['Team'].astype("category").cat.codes
 
@@ -10,9 +10,9 @@ def AjoutStats(data):
         data.loc[i,'Team'] = data.loc[i,'Team'].strip()
         data.loc[i,'GoalsPerGames'] = round(data.loc[i,'Gls']/data.loc[i,'MP'],2)
         data.loc[i,'Buts'] = 0
-        if data.loc[i,'CrdY'] == 0.0 and data.loc[i,'Pos'] == 'GK':
+        if data.loc[i,'CrdY'] == 0 and data.loc[i,'Pos'] == 'GK':
             data.loc[i,'CrdYAvg'] = 0.0
-        elif data.loc[i,'CrdY'] == 0.0:
+        elif data.loc[i,'CrdY'] == 0:
             data.loc[i,'CrdYAvg'] = 0.04
         else:
             data.loc[i,'CrdYAvg'] = data.loc[i,'CrdY']/50
@@ -40,17 +40,17 @@ def AjoutStats(data):
     return data
 
 def penalty_taker(data):
-    TakersPerTeam = {}
+    takers_per_team = {}
     for i in data['Team'].unique():
-        TakersPerTeam[i] ={'Pénalty':[]}
+        takers_per_team[i] ={'Pénalty':[]}
         
     for j in range(len(data)):
-        for k in TakersPerTeam:
+        for k in takers_per_team:
             if data.loc[j,'Team'] ==k and data.loc[j,'PKatt'] > 0:
                 penalty_goals = data.loc[j, 'PK']
                 player_name = data.loc[j, 'Player']
-                TakersPerTeam[k]['Pénalty'].append({player_name: int(penalty_goals)})
-    return TakersPerTeam
+                takers_per_team[k]['Pénalty'].append({player_name: int(penalty_goals)})
+    return takers_per_team
 
 def find_top_scorer(data):
     top_scorers = {}
@@ -68,7 +68,7 @@ def find_top_scorer(data):
 
 
 def valeur_takers(data):
-    FKTakersPerTeam = {'Manchester City': 'Kevin De Bruyne', 'Liverpool': 'Trent Alexander-Arnold', 'Arsenal': 'Martin Ødegaard', 'Chelsea': 'Cole Palmer', 
+    fk_takers_per_team = {'Manchester City': 'Kevin De Bruyne', 'Liverpool': 'Trent Alexander-Arnold', 'Arsenal': 'Martin Ødegaard', 'Chelsea': 'Cole Palmer', 
                    'Newcastle ': 'Kieran Trippier', 'Tottenham ': 'James Maddison', 'Manchester United': 'Bruno Fernandes', 'Aston Villa': 'Lucas Digne', 
                    'West Ham': 'James Ward-Prowse', 'Crystal Palace': 'Eberechi Eze', 'Fulham': 'Harry Wilson', 'Everton': 'Ashley Young',
                    'Brighton': 'Danny Welbeck', 'Bournemouth': 'Justin Kluivert', 'Wolves': 'Pablo Sarabia', 'Brentford': 'Bryan Mbeumo', 
@@ -78,39 +78,37 @@ def valeur_takers(data):
             data.loc[j,'PkTaker'] = 1
         else:
             data.loc[j,'PkTaker'] = 0
-        if data.loc[j,'Player'] in FKTakersPerTeam.values():
+        if data.loc[j,'Player'] in fk_takers_per_team.values():
             data.loc[j,'FKTaker'] = 1
         else:
             data.loc[j,'FKTaker'] = 0
 
 
 def data_team_effectif(data):
-    Starting11EachTeam  = {}
-    BenchPlayers = {}
-    dataJoueur = {}
+    starting_11_each_team  = {}
+    bench_players = {}
+    data_joueur = {}
     for i in data['Team'].unique():
-        Starting11EachTeam[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
-        BenchPlayers[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(Starting11EachTeam[i])).reset_index(drop=True)
+        starting_11_each_team[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
+        bench_players[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(starting_11_each_team[i])).reset_index(drop=True)
 
     features_players = ['Player','Team','Pos','PkTaker','FKTaker','Gls_90','Ast_90','xG_90','xAG_90','GoalsPerGames','CrdY','CrdYAvg','CrdRPro','FirstPos','SecondPos','MP']
     for i in data['Team'].unique():
-        dataJoueur[i] = {
-            'Starting11Players' : Starting11EachTeam[i][features_players],
-            'BenchPlayers' : BenchPlayers[i][features_players]
+        data_joueur[i] = {
+            'Starting11Players' : starting_11_each_team[i][features_players],
+            'BenchPlayers' : bench_players[i][features_players]
         }
-    return dataJoueur
+    return data_joueur
 
 
-
-#print(data_joueur_stats.loc[0:21,['Player','Team','Pos','Gls_90','Ast_90','xG_90','xAG_90','CrdY']])
-data_joueur_stats = AjoutStats(data_joueur_stats)
+data_joueur_stats = ajout_stats(data_joueur_stats)
 top_scorers = find_top_scorer(penalty_taker(data_joueur_stats))
 valeur_takers(data_joueur_stats)
 data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
 
-def probabilité_changement(data1,data2):
+def probabilite_changement(data1,data2):
     for k in data1['Team'].unique():
-        max_game_benchPlayers = data2[k]['BenchPlayers']['MP'].max()
+        max_game_bench_players = data2[k]['BenchPlayers']['MP'].max()
         for i in range(len(data2[k]['BenchPlayers'])):
             if data2[k]['BenchPlayers'].loc[i,'FirstPos'] == 'FW' or data2[k]['BenchPlayers'].loc[i,'SecondPos'] == 'FW':
                 data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.65
@@ -121,7 +119,7 @@ def probabilité_changement(data1,data2):
             else:
                 data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.0
                 
-            data2[k]['BenchPlayers'].loc[i,'ProbMP'] = round(data2[k]['BenchPlayers'].loc[i,'MP'] / max_game_benchPlayers,2)
+            data2[k]['BenchPlayers'].loc[i,'ProbMP'] = round(data2[k]['BenchPlayers'].loc[i,'MP'] / max_game_bench_players,2)
 
             data2[k]['BenchPlayers'].loc[i,'ProbFinal'] = round(data2[k]['BenchPlayers'].loc[i,'ProbMP'] * data2[k]['BenchPlayers'].loc[i,'ProbPos'],2)
             
@@ -138,5 +136,4 @@ def probabilité_changement(data1,data2):
             else:
                 data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.0
 
-probabilité_changement(data_joueur_stats, data_joueur_predictions_buteurs)
-#print(data_joueur_predictions_buteurs['Manchester City'])
+probabilite_changement(data_joueur_stats, data_joueur_predictions_buteurs)
