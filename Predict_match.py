@@ -28,19 +28,6 @@ model_yellowA = train_models(data_2324,features_cartons_jaunes,'AYellow')
 model_redH = train_models(data_2324,features_cartons_rouges,'HRed')
 model_redA = train_models(data_2324,features_cartons_rouges,'ARed')
 
-"""
-prediction_buts_domicile = (model_buts_dom.predict(match_feature)[0]) + np.random.normal(0, 0.7)
-prediction_buts_extérieur = (model_buts_extérieur.predict(match_feature)[0]) + np.random.normal(0, 0.7)
-
-prediction_buts_domicile = max(0,round(prediction_buts_domicile))
-prediction_buts_extérieur = max(0,round(prediction_buts_extérieur))
-
-prediction_tirs_cadre_domicile = (model_tirsCadreH.predict(tirs_cadre_stat_features)[0]) + np.random.normal(0, 0.7)
-prediction_tirs_cadre_extérieur = (model_tirsCadreA.predict(tirs_cadre_stat_features)[0]) + np.random.normal(0, 0.7)
-
-prediction_tirs_cadre_domicile = max(0,round(prediction_tirs_cadre_domicile))
-prediction_tirs_cadre_extérieur = max(0,round(prediction_tirs_cadre_extérieur))
-"""
 def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom,pos_features,match_feature,
                         tirs_stats_features,tirs_cadre_stat_features,yellow_features,red_features,corners_stats_features, fouls_features,XG_features):
     
@@ -131,7 +118,7 @@ def predict_match_stats(model_buts_dom,model_buts_extérieur,model_possesion_dom
     prediction_XG_domicile = max(0, round(prediction_XG_domicile, 2))
     prediction_XG_extérieur = max(0, round(prediction_XG_extérieur, 2))
     
-    print((prediction_XG_domicile),(prediction_XG_extérieur))
+    #print((prediction_XG_domicile),(prediction_XG_extérieur))
     
     return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_extérieur, prediction_fouls_domicile, prediction_fouls_extérieur, prediction_carton_jaunes_domicile, prediction_carton_jaunes_extérieur, prediction_carton_rouges_domicile, prediction_carton_rouges_extérieur
 

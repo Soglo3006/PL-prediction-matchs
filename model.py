@@ -1,5 +1,5 @@
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier, GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier
 
 def train_models(data, features, teamCategorie):
     X = data[features]
