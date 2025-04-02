@@ -58,7 +58,7 @@ def find_top_scorer(data):
         penalty_info = stats['Pénalty']
         top_player = penalty_info[0]  
         for player_stat in penalty_info:
-            player, goals = list(player_stat.items())[0]
+            _, goals = list(player_stat.items())[0]
             if goals > list(top_player.values())[0]:
                 top_player = player_stat
         team_name = team
