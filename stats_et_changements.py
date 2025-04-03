@@ -1,6 +1,6 @@
 import random 
 
-def stats_joueur(team_list, col, players_col):
+def select_event_player(team_list, col, players_col):
     joueur_team = []
 
     starting_players = team_list[0][players_col]

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
-from détails_simulation import simulate_match
+from simulation import simulate_match
 from fetch_premier_league_data import avantage_domicile, difference_buts,moyenne_con_but_dom, moyenne_con_but_ext, moyenne_dom_but, moyenne_ext_but,data_2324
 from features import features_match,features_possession,features_tirs,features_tirsCadre, features_cartons_jaunes,features_cartons_rouges,features_corners,features_foul,features_xG, create_match_features
 from model import train_models

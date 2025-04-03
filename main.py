@@ -1,8 +1,5 @@
 from fetch_premier_league_data import data_2324
-import matplotlib.pyplot as plt
-from Predict_match import predict_future_match
-from Predict_match import model_home,model_away,model_possession
-import streamlit as st
+from predict_match import predict_future_match,model_home,model_away,model_possession 
 import random
 
 home_team = str(random.choice(data_2324['HomeTeam'].unique()))

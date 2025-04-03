@@ -1,5 +1,5 @@
 import random
-from stats_et_changements import stats_joueur, changement_de_joueur
+from stats_et_changements import select_event_player, changement_de_joueur
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
 def minutes_stats(stats,probabilites,intervale_x,intervale_y,liste):
@@ -18,28 +18,27 @@ def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_r
     for minute_match in minutes_stats_team:
         for minute_but in minutes_buts:
             if minute_match == minute_but and len(buteur_team) < prediction_buts_team:
-                buteur,team_liste = stats_joueur(team_liste,'Gls_90','Starting11Players')
-                passeur,team_liste = stats_joueur(team_liste,'Ast_90','Starting11Players')
+                buteur,team_liste = select_event_player(team_liste,'Gls_90','Starting11Players')
+                passeur,team_liste = select_event_player(team_liste,'Ast_90','Starting11Players')
                 while passeur == buteur:
-                    passeur = passeur,team_liste = stats_joueur(team_liste,'Ast_90','Starting11Players')
+                    passeur = passeur,team_liste = select_event_player(team_liste,'Ast_90','Starting11Players')
                 buteur_team.append((buteur, minute_match))
                 passeur_team.append((passeur, minute_match))
 
         for minute_carton_jaune in minutes_fautes_cartons_jaunes: 
             if minute_match == minute_carton_jaune and len(yellow_team) < cartons_jaunes_team:
-                joueur_carton_jaune,team_liste = stats_joueur(team_liste,'CrdYAvg','Starting11Players')
+                joueur_carton_jaune,team_liste = select_event_player(team_liste,'CrdYAvg','Starting11Players')
                 yellow_team.append((joueur_carton_jaune,minute_carton_jaune))
 
         for minute_carton_rouge in minutes_fautes_carton_rouge :
             if minute_match == minute_carton_rouge and len(red_team) < cartons_rouges_team :
-                joueur_carton_rouge,team_liste = stats_joueur(team_liste,'CrdRPro','Starting11Players')
+                joueur_carton_rouge,team_liste = select_event_player(team_liste,'CrdRPro','Starting11Players')
                 red_team.append((joueur_carton_rouge,minute_carton_rouge))
-                print(team_liste)
 
         for minute_changement in minutes_changements:
             if minute_match == minute_changement and len(joueur_remplacer_team) < remplacant_nb :
-                starting_player, team_liste = stats_joueur(team_liste,'ProbOut','Starting11Players')
-                bench_player, team_liste = stats_joueur(team_liste,'ProbFinal','BenchPlayers')
+                starting_player, team_liste = select_event_player(team_liste,'ProbOut','Starting11Players')
+                bench_player, team_liste = select_event_player(team_liste,'ProbFinal','BenchPlayers')
                 resultat,updateteam  = changement_de_joueur(data_joueur_predictions_buteurs,team,starting_player,bench_player)
                 team_liste = updateteam
                 resultat = resultat[0]['Player']
