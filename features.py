@@ -56,7 +56,6 @@ def create_match_features(home_team, away_team, data):
 
     return match_data
 
-
 features_possession = [
     'Home_avgGoal','Away_avgGoal','Home_avgShot',
     'Away_avgShot', 'Home_avgShot_Target'
@@ -98,7 +97,6 @@ features_cartons_jaunes = [
     'home_advantage' 
 ]
 
-
 features_cartons_rouges = [
     'Home_avgFouls', 'Away_avgFouls',  
     'home_form', 'away_form',  
@@ -114,7 +112,6 @@ features_corners = [
     'home_form', 'away_form',  
     'home_advantage'  
 ]
-
 
 features_foul = [
     'Home_avgPos', 'Away_avgPos',   

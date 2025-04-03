@@ -39,11 +39,13 @@ def ajout_stats(data):
             data.loc[player_index,'SecondPos'] = 'FW'
         elif data.loc[player_index,'Pos'] == 'MF,DF' or data.loc[player_index,'Pos'] == 'FW,DF':
             data.loc[player_index,'SecondPos'] = 'DF'
+            
     return data
 
 def penalty_taker(data):
     penalty = 'Pénalty'
     takers_per_team = {}
+    
     for team in data['Team'].unique():
         takers_per_team[team] ={penalty:[]}
         
@@ -53,10 +55,12 @@ def penalty_taker(data):
                 penalty_goals = data.loc[player_index, 'PK']
                 player_name = data.loc[player_index, 'Player']
                 takers_per_team[player][penalty].append({player_name: int(penalty_goals)})
+                
     return takers_per_team
 
 def find_top_scorer(data):
     top_scorers = {}
+    
     for team, stats in data.items():
         penalty_info = stats['Pénalty']
         top_player = penalty_info[0]  
@@ -67,8 +71,8 @@ def find_top_scorer(data):
         team_name = team
         player_name = list(top_player.keys())[0]
         top_scorers[team_name] = player_name
+        
     return top_scorers
-
 
 def valeur_takers(data):
     fk_takers_per_team = {'Manchester City': 'Kevin De Bruyne', 'Liverpool': 'Trent Alexander-Arnold', 'Arsenal': 'Martin Ødegaard', 'Chelsea': 'Cole Palmer', 
@@ -76,6 +80,7 @@ def valeur_takers(data):
                    'West Ham': 'James Ward-Prowse', 'Crystal Palace': 'Eberechi Eze', 'Fulham': 'Harry Wilson', 'Everton': 'Ashley Young',
                    'Brighton': 'Danny Welbeck', 'Bournemouth': 'Justin Kluivert', 'Wolves': 'Pablo Sarabia', 'Brentford': 'Bryan Mbeumo', 
                    'Nottingham Forest': 'Morgan Gibbs-White', 'Luton ': 'Alfie Doughty', 'Burnley': 'Josh Brownhill', 'Sheffield United': 'Gustavo Hamer'}
+    
     for player_index in range(len(data)):
         if data.loc[player_index,'Player'] in top_scorers.values():
             data.loc[player_index,'PkTaker'] = 1
@@ -86,11 +91,11 @@ def valeur_takers(data):
         else:
             data.loc[player_index,'FKTaker'] = 0
 
-
 def data_team_effectif(data):
     starting_11_each_team  = {}
     bench_players = {}
     data_joueur = {}
+    
     for team in data['Team'].unique():
         starting_11_each_team[team] = data[data['Team'] == team].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
         bench_players[team] = data[data['Team'] == team ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == team ])- len(starting_11_each_team[team])).reset_index(drop=True)
@@ -101,8 +106,8 @@ def data_team_effectif(data):
             'Starting11Players' : starting_11_each_team[team][features_players],
             'BenchPlayers' : bench_players[team][features_players]
         }
+        
     return data_joueur
-
 
 data_joueur_stats = ajout_stats(data_joueur_stats)
 top_scorers = find_top_scorer(penalty_taker(data_joueur_stats))

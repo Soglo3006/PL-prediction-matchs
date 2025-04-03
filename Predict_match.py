@@ -64,7 +64,6 @@ def predict_match_stats(model_buts_dom,model_buts_exterieur,model_possesion_dom,
     
     print("tirs cadre domicile:"f"{round(prediction_tirs_cadre_domicile)}","tirs cadres exterireur:"f"{round(prediction_tirs_cadre_exterieur)}")
     
-    
     prediction_carton_jaunes_domicile = (model_yellowH.predict(yellow_features)[0]) + np.random.normal(0, 0.7)
     prediction_carton_jaunes_exterieur = (model_yellowA.predict(yellow_features)[0]) + np.random.normal(0, 0.7)
     
@@ -101,7 +100,6 @@ def predict_match_stats(model_buts_dom,model_buts_exterieur,model_possesion_dom,
     prediction_fouls_exterieur = max(0,round(prediction_fouls_exterieur))
     
     print("Fautes domicile:"f"{round(prediction_fouls_domicile)}","Fautes exterireur:"f"{round(prediction_fouls_exterieur)}")
-
     
     prediction_xg_domicile = model_xGH.predict(xg_features)[0]
     prediction_xg_exterieur = model_xGA.predict(xg_features)[0]
@@ -135,7 +133,6 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     corners_features = pd.DataFrame([[match_data[f] for f in features_corners]], columns=features_corners)
     foul_features = pd.DataFrame([[match_data[f] for f in features_foul]], columns=features_foul)
     xg_features = pd.DataFrame([[match_data[f] for f in features_xG]], columns=features_xG)
-
     
     _, _, prediction_buts_domicile, prediction_buts_exterieur,_,_,home_yellow,away_yellow,home_red, away_red = predict_match_stats(
         model_1, model_2, model_3, possesion_features, match_features, tirs_features, tirs_cadres_features,
@@ -144,6 +141,5 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     
     buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players,red_home_players, red_away_players, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away  = simulate_match(
         h_team, a_team, prediction_buts_domicile, prediction_buts_exterieur,home_yellow,away_yellow,home_red,away_red)
-    
 
     return prediction_buts_domicile, prediction_buts_exterieur, buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players, red_home_players, red_away_players, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away
