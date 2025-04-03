@@ -1,5 +1,4 @@
 import random 
-from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
 def stats_joueur(team_list, col, players_col):
     joueur_team = []
