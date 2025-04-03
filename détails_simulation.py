@@ -10,36 +10,36 @@ def minutes_stats(stats,probabilites,intervale_x,intervale_y,liste):
     return liste
 
 def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_rouges_team,remplacant_nb,team,
-                  buteur_team,passeur_team,yellow_team,red_team,joueur_remplacer_team,joueur_rentre_team, minutes_buts, minutes_changement, minutes_fautes_cartons_jaunes,
-                  minutes_fautes_carton_rouge,minutes_stats):
-    for i in minutes_stats:
-        for j in minutes_buts:
-            if i == j and len(buteur_team) < prediction_buts_team:
+                  buteur_team,passeur_team,yellow_team,red_team,joueur_remplacer_team,joueur_rentre_team, minutes_buts, minutes_changements, minutes_fautes_cartons_jaunes,
+                  minutes_fautes_carton_rouge,minutes_stats_team):
+    for minute_match in minutes_stats_team:
+        for minute_but in minutes_buts:
+            if minute_match == minute_but and len(buteur_team) < prediction_buts_team:
                 buteur,team_liste = stats_joueur(team_liste,'Gls_90','Starting11Players')
                 passeur,team_liste = stats_joueur(team_liste,'Ast_90','Starting11Players')
                 while passeur == buteur:
                     passeur = passeur,team_liste = stats_joueur(team_liste,'Ast_90','Starting11Players')
-                buteur_team.append((buteur, i))
-                passeur_team.append((passeur, i))
-        for z in minutes_fautes_cartons_jaunes: 
-            if i == z and len(yellow_team) < cartons_jaunes_team:
+                buteur_team.append((buteur, minute_match))
+                passeur_team.append((passeur, minute_match))
+        for minute_carton_jaune in minutes_fautes_cartons_jaunes: 
+            if minute_match == minute_carton_jaune and len(yellow_team) < cartons_jaunes_team:
                 joueur_carton_jaune,team_liste = stats_joueur(team_liste,'CrdYAvg','Starting11Players')
-                yellow_team.append((joueur_carton_jaune,z))
+                yellow_team.append((joueur_carton_jaune,minute_carton_jaune))
                 
-        for l in minutes_fautes_carton_rouge :
-            if i == l and len(red_team) < cartons_rouges_team :
+        for minute_carton_rouge in minutes_fautes_carton_rouge :
+            if minute_match == minute_carton_rouge and len(red_team) < cartons_rouges_team :
                 joueur_carton_rouge,team_liste = stats_joueur(team_liste,'CrdRPro','Starting11Players')
-                red_team.append((joueur_carton_rouge,l))
+                red_team.append((joueur_carton_rouge,minute_carton_rouge))
                 print(team_liste)
-        for k in minutes_changement:
-            if i == k and len(joueur_remplacer_team) < remplacant_nb :
+        for minute_changement in minutes_changements:
+            if minute_match == minute_changement and len(joueur_remplacer_team) < remplacant_nb :
                 starting_player, team_liste = stats_joueur(team_liste,'ProbOut','Starting11Players')
                 bench_player, team_liste = stats_joueur(team_liste,'ProbFinal','BenchPlayers')
                 resultat,updateteam  = changement_de_joueur(data_joueur_predictions_buteurs,team,starting_player,bench_player)
                 team_liste = updateteam
                 resultat = resultat[0]['Player']
-                joueur_remplacer_team.append((starting_player,k))
-                joueur_rentre_team.append((bench_player,k))
+                joueur_remplacer_team.append((starting_player,minute_changement))
+                joueur_rentre_team.append((bench_player,minute_changement))
     return buteur_team, passeur_team, yellow_team, red_team, joueur_remplacer_team, joueur_rentre_team
 
 def simulate_match(home_team,away_team,prediction_buts_domicile, prediction_buts_exterieur,home_yellow,away_yellow,home_red,away_red):
