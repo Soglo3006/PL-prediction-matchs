@@ -6,50 +6,53 @@ def ajout_stats(data):
     data['PlayerID'] = data['Player'].astype("category").cat.codes
     data['TeamID'] = data['Team'].astype("category").cat.codes
 
-    for i in range(len(data)):
-        data.loc[i,'Team'] = data.loc[i,'Team'].strip()
-        data.loc[i,'GoalsPerGames'] = round(data.loc[i,'Gls']/data.loc[i,'MP'],2)
-        data.loc[i,'Buts'] = 0
-        if data.loc[i,'CrdY'] == 0 and data.loc[i,'Pos'] == 'GK':
-            data.loc[i,'CrdYAvg'] = 0.0
-        elif data.loc[i,'CrdY'] == 0:
-            data.loc[i,'CrdYAvg'] = 0.04
+    for player_index in range(len(data)):
+        
+        data.loc[player_index,'Team'] = data.loc[player_index,'Team'].strip()
+        data.loc[player_index,'GoalsPerGames'] = round(data.loc[player_index,'Gls']/data.loc[player_index,'MP'],2)
+        data.loc[player_index,'Buts'] = 0
+        
+        if data.loc[player_index,'CrdY'] == 0 and data.loc[player_index,'Pos'] == 'GK':
+            data.loc[player_index,'CrdYAvg'] = 0.0
+        elif data.loc[player_index,'CrdY'] == 0:
+            data.loc[player_index,'CrdYAvg'] = 0.04
         else:
-            data.loc[i,'CrdYAvg'] = data.loc[i,'CrdY']/50
+            data.loc[player_index,'CrdYAvg'] = data.loc[player_index,'CrdY']/50
             
-        if data.loc[i,'Pos'] == 'GK':
-            data.loc[i,'CrdRPro'] = 0.0
-            data.loc[i,'ProbChangement'] = 0.0
-            data.loc[i,'FirstPos'] = 'GK'
-        elif data.loc[i,'Pos'] == 'DF' or data.loc[i,'Pos'] == 'DF,MF' or data.loc[i,'Pos']== 'DF,FW':
-            data.loc[i,'CrdRPro'] = 0.02
-            data.loc[i,'FirstPos'] = 'DF'
-        elif data.loc[i,'Pos'] == 'MF' or data.loc[i,'Pos'] == 'MF,DF' or data.loc[i,'Pos'] == 'MF,FW':
-            data.loc[i,'CrdRPro'] = 0.015
-            data.loc[i,'FirstPos'] = 'MF'
-        elif data.loc[i,'Pos'] == 'FW' or data.loc[i,'Pos'] == 'FW,DF' or data.loc[i,'Pos'] == 'FW,MF':
-            data.loc[i,'CrdRPro'] = 0.005
-            data.loc[i,'FirstPos'] = 'FW'
+        if data.loc[player_index,'Pos'] == 'GK':
+            data.loc[player_index,'CrdRPro'] = 0.0
+            data.loc[player_index,'ProbChangement'] = 0.0
+            data.loc[player_index,'FirstPos'] = 'GK'
+        elif data.loc[player_index,'Pos'] == 'DF' or data.loc[player_index,'Pos'] == 'DF,MF' or data.loc[player_index,'Pos']== 'DF,FW':
+            data.loc[player_index,'CrdRPro'] = 0.02
+            data.loc[player_index,'FirstPos'] = 'DF'
+        elif data.loc[player_index,'Pos'] == 'MF' or data.loc[player_index,'Pos'] == 'MF,DF' or data.loc[player_index,'Pos'] == 'MF,FW':
+            data.loc[player_index,'CrdRPro'] = 0.015
+            data.loc[player_index,'FirstPos'] = 'MF'
+        elif data.loc[player_index,'Pos'] == 'FW' or data.loc[player_index,'Pos'] == 'FW,DF' or data.loc[player_index,'Pos'] == 'FW,MF':
+            data.loc[player_index,'CrdRPro'] = 0.005
+            data.loc[player_index,'FirstPos'] = 'FW'
             
-        if data.loc[i,'Pos'] == 'DF,MF' or data.loc[i,'Pos'] == 'FW,MF':
-            data.loc[i,'SecondPos'] = 'MF'
-        elif data.loc[i,'Pos'] == 'DF,FW' or data.loc[i,'Pos'] == 'MF,FW':
-            data.loc[i,'SecondPos'] = 'FW'
-        elif data.loc[i,'Pos'] == 'MF,DF' or data.loc[i,'Pos'] == 'FW,DF':
-            data.loc[i,'SecondPos'] = 'DF'
+        if data.loc[player_index,'Pos'] == 'DF,MF' or data.loc[player_index,'Pos'] == 'FW,MF':
+            data.loc[player_index,'SecondPos'] = 'MF'
+        elif data.loc[player_index,'Pos'] == 'DF,FW' or data.loc[player_index,'Pos'] == 'MF,FW':
+            data.loc[player_index,'SecondPos'] = 'FW'
+        elif data.loc[player_index,'Pos'] == 'MF,DF' or data.loc[player_index,'Pos'] == 'FW,DF':
+            data.loc[player_index,'SecondPos'] = 'DF'
     return data
 
 def penalty_taker(data):
+    penalty = 'Pénalty'
     takers_per_team = {}
-    for i in data['Team'].unique():
-        takers_per_team[i] ={'Pénalty':[]}
+    for team in data['Team'].unique():
+        takers_per_team[team] ={penalty:[]}
         
-    for j in range(len(data)):
-        for k in takers_per_team:
-            if data.loc[j,'Team'] ==k and data.loc[j,'PKatt'] > 0:
-                penalty_goals = data.loc[j, 'PK']
-                player_name = data.loc[j, 'Player']
-                takers_per_team[k]['Pénalty'].append({player_name: int(penalty_goals)})
+    for player_index in range(len(data)):
+        for player in takers_per_team:
+            if data.loc[player_index,'Team'] == player and data.loc[player_index,'PKatt'] > 0:
+                penalty_goals = data.loc[player_index, 'PK']
+                player_name = data.loc[player_index, 'Player']
+                takers_per_team[player][penalty].append({player_name: int(penalty_goals)})
     return takers_per_team
 
 def find_top_scorer(data):
@@ -73,30 +76,30 @@ def valeur_takers(data):
                    'West Ham': 'James Ward-Prowse', 'Crystal Palace': 'Eberechi Eze', 'Fulham': 'Harry Wilson', 'Everton': 'Ashley Young',
                    'Brighton': 'Danny Welbeck', 'Bournemouth': 'Justin Kluivert', 'Wolves': 'Pablo Sarabia', 'Brentford': 'Bryan Mbeumo', 
                    'Nottingham Forest': 'Morgan Gibbs-White', 'Luton ': 'Alfie Doughty', 'Burnley': 'Josh Brownhill', 'Sheffield United': 'Gustavo Hamer'}
-    for j in range(len(data)):
-        if data.loc[j,'Player'] in top_scorers.values():
-            data.loc[j,'PkTaker'] = 1
+    for player_index in range(len(data)):
+        if data.loc[player_index,'Player'] in top_scorers.values():
+            data.loc[player_index,'PkTaker'] = 1
         else:
-            data.loc[j,'PkTaker'] = 0
-        if data.loc[j,'Player'] in fk_takers_per_team.values():
-            data.loc[j,'FKTaker'] = 1
+            data.loc[player_index,'PkTaker'] = 0
+        if data.loc[player_index,'Player'] in fk_takers_per_team.values():
+            data.loc[player_index,'FKTaker'] = 1
         else:
-            data.loc[j,'FKTaker'] = 0
+            data.loc[player_index,'FKTaker'] = 0
 
 
 def data_team_effectif(data):
     starting_11_each_team  = {}
     bench_players = {}
     data_joueur = {}
-    for i in data['Team'].unique():
-        starting_11_each_team[i] = data[data['Team']==i].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
-        bench_players[i] = data[data['Team'] == i ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == i ])- len(starting_11_each_team[i])).reset_index(drop=True)
+    for team in data['Team'].unique():
+        starting_11_each_team[team] = data[data['Team'] == team].sort_values(by = ['Starts'], ascending =False).head(11).reset_index(drop=True)
+        bench_players[team] = data[data['Team'] == team ].sort_values(by = ['Starts'], ascending =False).tail(len(data[data['Team'] == team ])- len(starting_11_each_team[team])).reset_index(drop=True)
 
     features_players = ['Player','Team','Pos','PkTaker','FKTaker','Gls_90','Ast_90','xG_90','xAG_90','GoalsPerGames','CrdY','CrdYAvg','CrdRPro','FirstPos','SecondPos','MP']
-    for i in data['Team'].unique():
-        data_joueur[i] = {
-            'Starting11Players' : starting_11_each_team[i][features_players],
-            'BenchPlayers' : bench_players[i][features_players]
+    for team in data['Team'].unique():
+        data_joueur[team] = {
+            'Starting11Players' : starting_11_each_team[team][features_players],
+            'BenchPlayers' : bench_players[team][features_players]
         }
     return data_joueur
 
@@ -107,33 +110,32 @@ valeur_takers(data_joueur_stats)
 data_joueur_predictions_buteurs = data_team_effectif(data_joueur_stats)
 
 def probabilite_changement(data1,data2):
-    for k in data1['Team'].unique():
-        max_game_bench_players = data2[k]['BenchPlayers']['MP'].max()
-        for i in range(len(data2[k]['BenchPlayers'])):
-            if data2[k]['BenchPlayers'].loc[i,'FirstPos'] == 'FW' or data2[k]['BenchPlayers'].loc[i,'SecondPos'] == 'FW':
-                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.65
-            elif data2[k]['BenchPlayers'].loc[i,'FirstPos'] == 'MF':
-                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.45
-            elif data2[k]['BenchPlayers'].loc[i,'FirstPos'] == 'DF':
-                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.20
+    for team in data1['Team'].unique():
+        max_game_bench_players = data2[team]['BenchPlayers']['MP'].max()
+        for player_index_bench in range(len(data2[team]['BenchPlayers'])):
+            if data2[team]['BenchPlayers'].loc[player_index_bench,'FirstPos'] == 'FW' or data2[team]['BenchPlayers'].loc[player_index_bench,'SecondPos'] == 'FW':
+                data2[team]['BenchPlayers'].loc[player_index_bench,'ProbPos'] = 0.65
+            elif data2[team]['BenchPlayers'].loc[player_index_bench,'FirstPos'] == 'MF':
+                data2[team]['BenchPlayers'].loc[player_index_bench,'ProbPos'] = 0.45
+            elif data2[team]['BenchPlayers'].loc[player_index_bench,'FirstPos'] == 'DF':
+                data2[team]['BenchPlayers'].loc[player_index_bench,'ProbPos'] = 0.20
             else:
-                data2[k]['BenchPlayers'].loc[i,'ProbPos'] = 0.0
+                data2[team]['BenchPlayers'].loc[player_index_bench,'ProbPos'] = 0.0
                 
-            data2[k]['BenchPlayers'].loc[i,'ProbMP'] = round(data2[k]['BenchPlayers'].loc[i,'MP'] / max_game_bench_players,2)
-
-            data2[k]['BenchPlayers'].loc[i,'ProbFinal'] = round(data2[k]['BenchPlayers'].loc[i,'ProbMP'] * data2[k]['BenchPlayers'].loc[i,'ProbPos'],2)
+            data2[team]['BenchPlayers'].loc[player_index_bench,'ProbMP'] = round(data2[team]['BenchPlayers'].loc[player_index_bench,'MP'] / max_game_bench_players,2)
+            data2[team]['BenchPlayers'].loc[player_index_bench,'ProbFinal'] = round(data2[team]['BenchPlayers'].loc[player_index_bench,'ProbMP'] * data2[team]['BenchPlayers'].loc[player_index_bench,'ProbPos'],2)
             
-            if data2[k]['BenchPlayers'].loc[i,'MP'] < 10:
-                data2[k]['BenchPlayers'].loc[i,'ProbFinal'] = 0
+            if data2[team]['BenchPlayers'].loc[player_index_bench,'MP'] < 10:
+                data2[team]['BenchPlayers'].loc[player_index_bench,'ProbFinal'] = 0
 
-        for i in range(len(data2[k]['Starting11Players'])):
-            if data2[k]['Starting11Players'].loc[i,'FirstPos'] == 'FW' or data2[k]['Starting11Players'].loc[i,'SecondPos'] == 'FW':
-                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.60
-            elif data2[k]['Starting11Players'].loc[i,'FirstPos'] == 'MF':
-                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.50
-            elif data2[k]['Starting11Players'].loc[i,'FirstPos'] == 'DF':
-                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.30
+        for player_index_starter in range(len(data2[team]['Starting11Players'])):
+            if data2[team]['Starting11Players'].loc[player_index_starter,'FirstPos'] == 'FW' or data2[team]['Starting11Players'].loc[player_index_starter,'SecondPos'] == 'FW':
+                data2[team]['Starting11Players'].loc[player_index_starter,'ProbOut'] = 0.60
+            elif data2[team]['Starting11Players'].loc[player_index_starter,'FirstPos'] == 'MF':
+                data2[team]['Starting11Players'].loc[player_index_starter,'ProbOut'] = 0.50
+            elif data2[team]['Starting11Players'].loc[player_index_starter,'FirstPos'] == 'DF':
+                data2[team]['Starting11Players'].loc[player_index_starter,'ProbOut'] = 0.30
             else:
-                data2[k]['Starting11Players'].loc[i,'ProbOut'] = 0.0
+                data2[team]['Starting11Players'].loc[player_index_starter,'ProbOut'] = 0.0
 
 probabilite_changement(data_joueur_stats, data_joueur_predictions_buteurs)

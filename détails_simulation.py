@@ -10,7 +10,7 @@ def minutes_stats(stats,probabilites,intervale_x,intervale_y,liste):
     return liste
 
 def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_rouges_team,remplacant_nb,team,
-                  buteur_team,passeur_team,yellow_team,red_team,Joueur_remplacer_team,Joueur_rentre_team, minutes_buts, minutes_changement, minutes_fautes_cartons_jaunes,
+                  buteur_team,passeur_team,yellow_team,red_team,joueur_remplacer_team,joueur_rentre_team, minutes_buts, minutes_changement, minutes_fautes_cartons_jaunes,
                   minutes_fautes_carton_rouge,minutes_stats):
     for i in minutes_stats:
         for j in minutes_buts:
@@ -32,15 +32,15 @@ def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_r
                 red_team.append((joueur_carton_rouge,l))
                 print(team_liste)
         for k in minutes_changement:
-            if i == k and len(Joueur_remplacer_team) < remplacant_nb :
+            if i == k and len(joueur_remplacer_team) < remplacant_nb :
                 starting_player, team_liste = stats_joueur(team_liste,'ProbOut','Starting11Players')
                 bench_player, team_liste = stats_joueur(team_liste,'ProbFinal','BenchPlayers')
                 resultat,updateteam  = changement_de_joueur(data_joueur_predictions_buteurs,team,starting_player,bench_player)
                 team_liste = updateteam
                 resultat = resultat[0]['Player']
-                Joueur_remplacer_team.append((starting_player,k))
-                Joueur_rentre_team.append((bench_player,k))
-    return buteur_team, passeur_team, yellow_team, red_team, Joueur_remplacer_team, Joueur_rentre_team
+                joueur_remplacer_team.append((starting_player,k))
+                joueur_rentre_team.append((bench_player,k))
+    return buteur_team, passeur_team, yellow_team, red_team, joueur_remplacer_team, joueur_rentre_team
 
 def simulate_match(home_team,away_team,prediction_buts_domicile, prediction_buts_exterieur,home_yellow,away_yellow,home_red,away_red):
     home_team_liste = []
