@@ -23,4 +23,6 @@ if home_team != away_team:
             "joueur_rentre_away": joueur_rentre_away
         }    
     
-    print(f"Prédiction pour {home_team} vs {away_team} : {prediction}")
+    print(f"Prédiction pour {home_team} vs {away_team} :")
+    for key, value in prediction.items():
+        print(f"{key}: {value}")

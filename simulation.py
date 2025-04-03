@@ -62,7 +62,8 @@ def simulate_match(home_team,away_team,prediction_buts_domicile, prediction_buts
     joueur_rentre_home = []
     joueur_remplacer_away = []
     joueur_rentre_away = []
-    nb_remplacant_max = 2
+    nb_remplacant_max_home = random.randint(0,4)
+    nb_remplacant_max_away = random.randint(0,4)
     probabilites_minutes = [0.15,0.15,0.20,0.25,0.20,0.15]
     probabilites_minutes_changement = [0.05,0.10,0.20]
     carton_jaunes_home = home_yellow
@@ -85,24 +86,24 @@ def simulate_match(home_team,away_team,prediction_buts_domicile, prediction_buts
     minutes_fautes_cartons_rouges_away = []
 
     minutes_buts_home = minutes_stats(prediction_buts_domicile,probabilites_minutes,0,6,minutes_buts_home)
-    minutes_changement_home = minutes_stats(nb_remplacant_max,probabilites_minutes_changement,3,6,minutes_changement_home)
+    minutes_changement_home = minutes_stats(nb_remplacant_max_home,probabilites_minutes_changement,3,6,minutes_changement_home)
     minutes_fautes_cartons_jaunes_home = minutes_stats(carton_jaunes_home,probabilites_minutes,0,6,minutes_fautes_cartons_jaunes_home)
     minutes_fautes_cartons_rouges_home = minutes_stats(carton_rouges_home,probabilites_minutes,0,6,minutes_fautes_cartons_rouges_home)
 
     minutes_buts_away = minutes_stats(prediction_buts_exterieur,probabilites_minutes,0,6,minutes_buts_away)
-    minutes_changement_away = minutes_stats(nb_remplacant_max,probabilites_minutes_changement,3,6,minutes_changement_away)
+    minutes_changement_away = minutes_stats(nb_remplacant_max_away,probabilites_minutes_changement,3,6,minutes_changement_away)
     minutes_fautes_cartons_jaunes_away = minutes_stats(carton_jaunes_away,probabilites_minutes,0,6,minutes_fautes_cartons_jaunes_away)
     minutes_fautes_cartons_rouges_away = minutes_stats(carton_rouges_away,probabilites_minutes,0,6,minutes_fautes_cartons_rouges_away)
 
     minutes_stats_home = sorted(set(minutes_buts_home + minutes_changement_home + minutes_fautes_cartons_jaunes_home + minutes_fautes_cartons_rouges_home))
     minutes_stats_away = sorted(set(minutes_buts_away + minutes_changement_away + minutes_fautes_cartons_jaunes_away + minutes_fautes_cartons_rouges_away))
 
-    buteurs_home, passeur_home,yellow_home,red_home,joueur_remplacer_home,joueur_rentre_home = (match_process(prediction_buts_domicile,home_team_liste,carton_jaunes_home,carton_rouges_home,nb_remplacant_max,
+    buteurs_home, passeur_home,yellow_home,red_home,joueur_remplacer_home,joueur_rentre_home = (match_process(prediction_buts_domicile,home_team_liste,carton_jaunes_home,carton_rouges_home,nb_remplacant_max_home,
                     home_team,buteurs_home,passeur_home,yellow_home_players,red_home_players,joueur_remplacer_home,joueur_rentre_home,
                     minutes_buts_home, minutes_changement_home, minutes_fautes_cartons_jaunes_home,
                     minutes_fautes_cartons_rouges_home,minutes_stats_home))
     
-    buteurs_away, passeur_away , yellow_away, red_away, joueur_remplacer_away, joueur_rentre_away = (match_process(prediction_buts_exterieur,away_team_liste,carton_jaunes_away,carton_rouges_away,nb_remplacant_max,
+    buteurs_away, passeur_away , yellow_away, red_away, joueur_remplacer_away, joueur_rentre_away = (match_process(prediction_buts_exterieur,away_team_liste,carton_jaunes_away,carton_rouges_away,nb_remplacant_max_away,
                     away_team,buteurs_away,passeur_away,yellow_away_players,red_away_players,joueur_remplacer_away,joueur_rentre_away,
                     minutes_buts_away,minutes_changement_away,minutes_fautes_cartons_jaunes_away,minutes_fautes_cartons_rouges_away,minutes_stats_away))
     
