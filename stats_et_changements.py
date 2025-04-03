@@ -1,4 +1,5 @@
 import random 
+from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
 def stats_joueur(team_list, col, players_col):
     joueur_team = []
@@ -9,9 +10,16 @@ def stats_joueur(team_list, col, players_col):
 
     list_weight = [float(player[col]) for player in players_list]
 
-    buteur = random.choices(players_list, weights=list_weight, k=1)
+    joueur = random.choices(players_list, weights=list_weight, k=1)
+    joueur = joueur[0]['Player']
     team_list[0][players_col] = joueur_team
-    return buteur[0]['Player'], team_list
+    if col == 'CrdRPro':
+        for i in range(len(team_list[0][players_col])):
+            if team_list[0][players_col].loc[i, 'Player'] == joueur:
+                team_list[0][players_col].drop(i, inplace=True)
+                team_list[0][players_col].reset_index(drop=True, inplace=True)
+                break
+    return joueur, team_list
 
 def changement_de_joueur(data, team, starter_player, bench_player):
     team_liste = []
@@ -36,4 +44,3 @@ def changement_de_joueur(data, team, starter_player, bench_player):
     })
     
     return joueur_change, team_liste
-

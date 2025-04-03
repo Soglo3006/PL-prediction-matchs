@@ -28,8 +28,9 @@ def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_r
                 
         for l in minutes_fautes_carton_rouge :
             if i == l and len(red_team) < cartons_rouges_team :
-                joueur_carton_rouge,team_liste = stats_joueur(team_liste,'CrdRAvg','Starting11Players')
+                joueur_carton_rouge,team_liste = stats_joueur(team_liste,'CrdRPro','Starting11Players')
                 red_team.append((joueur_carton_rouge,l))
+                print(team_liste)
         for k in minutes_changement:
             if i == k and len(Joueur_remplacer_team) < remplacant_nb :
                 starting_player, team_liste = stats_joueur(team_liste,'ProbOut','Starting11Players')
@@ -101,6 +102,4 @@ def simulate_match(home_team,away_team,prediction_buts_domicile, prediction_buts
                     minutes_buts_away,minutes_changement_away,minutes_fautes_cartons_jaunes_away,minutes_fautes_cartons_rouges_away,minutes_stats_away))
     
     return buteurs_home, buteurs_away , passeur_home , passeur_away , yellow_home, yellow_away, red_home, red_away, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away
-    
-    
     
