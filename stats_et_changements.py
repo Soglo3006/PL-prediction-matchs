@@ -1,4 +1,5 @@
 import random 
+from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
 def select_event_player(team_list, col, players_col):
     joueur_team = []
@@ -17,6 +18,12 @@ def select_event_player(team_list, col, players_col):
         for index in range(len(team_list[0][players_col])):
             if team_list[0][players_col].loc[index, 'Player'] == joueur:
                 team_list[0][players_col].drop(index, inplace=True)
+                team_list[0][players_col].reset_index(drop=True, inplace=True)
+                break
+    if col == 'CrdYAvg':
+        for index in range(len(team_list[0][players_col])):
+            if team_list[0][players_col].loc[index, 'Player'] == joueur:
+                team_list[0][players_col].loc[index,'CrdYAvg'] = 0.01
                 team_list[0][players_col].reset_index(drop=True, inplace=True)
                 break
 
@@ -48,3 +55,4 @@ def changement_de_joueur(data, team, starter_player, bench_player):
     })
     
     return joueur_change, team_liste
+

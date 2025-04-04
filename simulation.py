@@ -97,15 +97,17 @@ def simulate_match(home_team,away_team,prediction_buts_domicile, prediction_buts
 
     minutes_stats_home = sorted(set(minutes_buts_home + minutes_changement_home + minutes_fautes_cartons_jaunes_home + minutes_fautes_cartons_rouges_home))
     minutes_stats_away = sorted(set(minutes_buts_away + minutes_changement_away + minutes_fautes_cartons_jaunes_away + minutes_fautes_cartons_rouges_away))
+    
+    minutes_stats_match = sorted(set(minutes_stats_home) | set(minutes_stats_away))
 
     buteurs_home, passeur_home,yellow_home,red_home,joueur_remplacer_home,joueur_rentre_home = (match_process(prediction_buts_domicile,home_team_liste,carton_jaunes_home,carton_rouges_home,nb_remplacant_max_home,
                     home_team,buteurs_home,passeur_home,yellow_home_players,red_home_players,joueur_remplacer_home,joueur_rentre_home,
                     minutes_buts_home, minutes_changement_home, minutes_fautes_cartons_jaunes_home,
-                    minutes_fautes_cartons_rouges_home,minutes_stats_home))
+                    minutes_fautes_cartons_rouges_home,minutes_stats_match))
     
     buteurs_away, passeur_away , yellow_away, red_away, joueur_remplacer_away, joueur_rentre_away = (match_process(prediction_buts_exterieur,away_team_liste,carton_jaunes_away,carton_rouges_away,nb_remplacant_max_away,
                     away_team,buteurs_away,passeur_away,yellow_away_players,red_away_players,joueur_remplacer_away,joueur_rentre_away,
-                    minutes_buts_away,minutes_changement_away,minutes_fautes_cartons_jaunes_away,minutes_fautes_cartons_rouges_away,minutes_stats_away))
+                    minutes_buts_away,minutes_changement_away,minutes_fautes_cartons_jaunes_away,minutes_fautes_cartons_rouges_away,minutes_stats_match))
     
     return buteurs_home, buteurs_away , passeur_home , passeur_away , yellow_home, yellow_away, red_home, red_away, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away
     
