@@ -139,7 +139,11 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
         carton_jaunes_features, carton_rouge_features, corners_features, foul_features, xg_features
     )
     
-    buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players,red_home_players, red_away_players, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away  = simulate_match(
-        h_team, a_team, prediction_buts_domicile, prediction_buts_exterieur,home_yellow,away_yellow,home_red,away_red)
+    buteurs_home, passeur_home, yellow_home_players,red_home_players, joueur_remplacer_home, joueur_rentre_home  = simulate_match(
+        h_team, prediction_buts_domicile,home_yellow,home_red)
+    
+    buteurs_away, passeur_away, yellow_away_players, red_away_players, joueur_remplacer_away, joueur_rentre_away = simulate_match(
+        a_team,prediction_buts_exterieur, away_yellow, away_red
+    )
 
     return prediction_buts_domicile, prediction_buts_exterieur, buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players, red_home_players, red_away_players, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away
