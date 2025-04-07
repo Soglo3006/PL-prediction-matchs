@@ -17,8 +17,7 @@ def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,home_new_col,away_ne
             elif data.loc[match_index,a_team] == team:
                 teams[team] += int(data.loc[match_index,a_categorie])
                 
-    for team in teams:
-        teams[team] = round(teams[team]/38,2)
+    teams = average_totals(teams)
         
     for match_index in range(len(data)):
         for a in teams:
@@ -27,6 +26,11 @@ def moyenne_stats(data,h_team,a_team,h_categore,a_categorie,home_new_col,away_ne
             elif a == data.loc[match_index,a_team]:
                 data.loc[match_index,away_new_col] = teams[a]
                 
+    return teams
+
+def average_totals(teams):
+    for team in teams:
+        teams[team] = round(teams[team] / 38, 2)
     return teams
 
 def calculate_form(data, team_col, result_col, new_col):
