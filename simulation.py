@@ -55,25 +55,23 @@ def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_r
     joueur_rentre_team = []
     
     for minute_match in minutes_stats_team:
-        for minute_but in minutes_buts:
-            if minute_match == minute_but :
-                buteur_team, passeur_team, team_liste = process_goal(minute_match, buteur_team, passeur_team, prediction_buts_team, team_liste)
+        if minute_match in minutes_buts:
+            buteur_team, passeur_team, team_liste = process_goal(
+                minute_match, buteur_team, passeur_team, prediction_buts_team, team_liste)
 
-        for minute_carton_jaune in minutes_fautes_cartons_jaunes: 
-            if minute_match == minute_carton_jaune:
-                yellow_team_players, team_liste = process_yellow_card(minute_match, yellow_team_players, cartons_jaunes_team, team_liste)
+        if minute_match in minutes_fautes_cartons_jaunes:
+            yellow_team_players, team_liste = process_yellow_card(
+                minute_match, yellow_team_players, cartons_jaunes_team, team_liste)
 
+        if minute_match in minutes_fautes_carton_rouge:
+            red_team_players, team_liste = process_red_card(
+                minute_match, red_team_players, cartons_rouges_team, team_liste)
 
-        for minute_carton_rouge in minutes_fautes_carton_rouge :
-            if minute_match == minute_carton_rouge:
-                red_team_players, team_liste = process_red_card(minute_match, red_team_players, cartons_rouges_team, team_liste)
-
-
-        for minute_changement in minutes_changements:
-            if minute_match == minute_changement:
-                joueur_remplacer_team, joueur_rentre_team, team_liste = process_substitution(minute_match, joueur_remplacer_team, remplacant_nb, team_liste, team, joueur_rentre_team)
-
-
+        if minute_match in minutes_changements:
+            joueur_remplacer_team, joueur_rentre_team, team_liste = process_substitution(
+                minute_match, joueur_remplacer_team, remplacant_nb, team_liste, team, joueur_rentre_team)
+            
+            
     return buteur_team, passeur_team, yellow_team_players, red_team_players, joueur_remplacer_team, joueur_rentre_team
 
 def simulate_match(team,prediction_buts_team,team_yellow,team_red):
