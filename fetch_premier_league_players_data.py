@@ -1,23 +1,16 @@
 import pandas as pd
 
 data_joueur_stats = pd.read_csv('fichier csv/premier-player-23-24.csv')
-
 def ajout_stats(data):
     data['PlayerID'] = data['Player'].astype("category").cat.codes
     data['TeamID'] = data['Team'].astype("category").cat.codes
 
+    yellow_card_prob(data)
     for player_index in range(len(data)):
         
         data.loc[player_index,'Team'] = data.loc[player_index,'Team'].strip()
         data.loc[player_index,'GoalsPerGames'] = round(data.loc[player_index,'Gls']/data.loc[player_index,'MP'],2)
         data.loc[player_index,'Buts'] = 0
-        
-        if data.loc[player_index,'CrdY'] == 0 and data.loc[player_index,'Pos'] == 'GK':
-            data.loc[player_index,'CrdYAvg'] = 0.0
-        elif data.loc[player_index,'CrdY'] == 0:
-            data.loc[player_index,'CrdYAvg'] = 0.04
-        else:
-            data.loc[player_index,'CrdYAvg'] = data.loc[player_index,'CrdY']/50
             
         if data.loc[player_index,'Pos'] == 'GK':
             data.loc[player_index,'CrdRPro'] = 0.0
@@ -33,14 +26,26 @@ def ajout_stats(data):
             data.loc[player_index,'CrdRPro'] = 0.005
             data.loc[player_index,'FirstPos'] = 'FW'
             
+    second_position(data)
+    return data
+
+def yellow_card_prob(data):
+    for player_index in range(len(data)):
+        if data.loc[player_index,'CrdY'] == 0 and data.loc[player_index,'Pos'] == 'GK':
+            data.loc[player_index,'CrdYAvg'] = 0.0
+        elif data.loc[player_index,'CrdY'] == 0:
+            data.loc[player_index,'CrdYAvg'] = 0.04
+        else:
+            data.loc[player_index,'CrdYAvg'] = data.loc[player_index,'CrdY']/50
+            
+def second_position(data):
+    for player_index in range(len(data)):
         if data.loc[player_index,'Pos'] == 'DF,MF' or data.loc[player_index,'Pos'] == 'FW,MF':
             data.loc[player_index,'SecondPos'] = 'MF'
         elif data.loc[player_index,'Pos'] == 'DF,FW' or data.loc[player_index,'Pos'] == 'MF,FW':
             data.loc[player_index,'SecondPos'] = 'FW'
         elif data.loc[player_index,'Pos'] == 'MF,DF' or data.loc[player_index,'Pos'] == 'FW,DF':
             data.loc[player_index,'SecondPos'] = 'DF'
-            
-    return data
 
 def penalty_taker(data):
     penalty = 'Pénalty'
@@ -133,6 +138,10 @@ def probabilite_changement(data1,data2):
             if data2[team]['BenchPlayers'].loc[player_index_bench,'MP'] < 10:
                 data2[team]['BenchPlayers'].loc[player_index_bench,'ProbFinal'] = 0
 
+    probabilite_changement_starter(data1,data2)
+    
+def probabilite_changement_starter(data1,data2):
+    for team in data1['Team'].unique():
         for player_index_starter in range(len(data2[team]['Starting11Players'])):
             if data2[team]['Starting11Players'].loc[player_index_starter,'FirstPos'] == 'FW' or data2[team]['Starting11Players'].loc[player_index_starter,'SecondPos'] == 'FW':
                 data2[team]['Starting11Players'].loc[player_index_starter,'ProbOut'] = 0.60
@@ -144,3 +153,4 @@ def probabilite_changement(data1,data2):
                 data2[team]['Starting11Players'].loc[player_index_starter,'ProbOut'] = 0.0
 
 probabilite_changement(data_joueur_stats, data_joueur_predictions_buteurs)
+
