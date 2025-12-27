@@ -1,5 +1,5 @@
 from fetch_premier_league_data import data_2324
-from predict_match import predict_future_match,model_home,model_away,model_possession 
+from Predict_match import predict_future_match,model_home,model_away,model_possession 
 import random
 
 home_team = str(random.choice(data_2324['HomeTeam'].unique()))
