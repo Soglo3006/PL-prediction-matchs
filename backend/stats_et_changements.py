@@ -1,4 +1,5 @@
 import random 
+import numpy as np
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
 def select_event_player(team_list, col, players_col):
@@ -9,6 +10,8 @@ def select_event_player(team_list, col, players_col):
     players_list = joueur_team.to_dict('records')
 
     list_weight = [float(player[col]) for player in players_list]
+
+    list_weight = [w if (np.isfinite(w) and w > 0) else 0.0 for w in list_weight]
 
     joueur = random.choices(players_list, weights=list_weight, k=1)
     joueur = joueur[0]['Player']

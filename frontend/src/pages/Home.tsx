@@ -1,6 +1,16 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TEAMS } from "../data/teams";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -12,49 +22,49 @@ export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#050513] text-white p-6">
       <div className="w-full max-w-3xl text-center">
-        <div className="flex items-center justify-center gap-3 mb-6">
-          <img src="/pl-logo.png" className="h-12 w-12" />
+        <div className="flex flex-col items-center justify-center gap-3 mb-6">
+          <img src="/pl-logo.png" className="h-30 w-30" />
           <h1 className="text-3xl font-extrabold">Premier League Match Simulator</h1>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <select
-            value={homeId}
-            onChange={(e) => setHomeId(e.target.value)}
-            className="w-full p-3 rounded-xl bg-white/10 border border-white/15"
-          >
-            <option value="">Home Team</option>
-            {TEAMS.map((t) => (
-              <option key={t.id} value={t.id}>{t.name}</option>
-            ))}
-          </select>
+          <Select value={homeId} onValueChange={setHomeId}>
+            <SelectTrigger className="w-full h-15 p-3 rounded-xl bg-white/10 border border-white/15 cursor-pointer">
+              <SelectValue placeholder="Home Team" className="text-center"/>
+            </SelectTrigger>
+            <SelectContent className="max-h-64 overflow-y-auto">
+              <SelectGroup>
+                <SelectLabel>Home Team</SelectLabel>
+                {TEAMS.map((t) => (
+                  <SelectItem className="cursor-pointer" key={t.id} value={t.id}>{t.name}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
 
-          <select
-            value={awayId}
-            onChange={(e) => setAwayId(e.target.value)}
-            className="w-full p-3 rounded-xl bg-white/10 border border-white/15"
-          >
-            <option value="">Away Team</option>
-            {TEAMS.map((t) => (
-              <option key={t.id} value={t.id}>{t.name}</option>
-            ))}
-          </select>
+          <Select value={awayId} onValueChange={setAwayId}>
+            <SelectTrigger className="w-full h-15 p-3 rounded-xl bg-white/10 border border-white/15 cursor-pointer">
+              <SelectValue placeholder="Away Team" />
+            </SelectTrigger>
+            <SelectContent className="max-h-64 overflow-y-auto">
+              <SelectGroup>
+                <SelectLabel>Away Team</SelectLabel>
+                {TEAMS.map((t) => (
+                  <SelectItem className="cursor-pointer" key={t.id} value={t.id}>{t.name}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
 
         <button
           disabled={!canPlay}
           onClick={() => navigate(`/match/${homeId}/${awayId}`)}
           className={`px-6 py-3 rounded-xl font-semibold transition
-            ${canPlay ? "bg-white text-black hover:opacity-90" : "bg-white/20 text-white/50 cursor-not-allowed"}`}
+            ${canPlay ? "bg-white text-black hover:opacity-90 cursor-pointer" : "bg-white/20 text-white/50 cursor-not-allowed"}`}
         >
-          Play / Simulate
+          Play
         </button>
-
-        {!canPlay && (
-          <p className="mt-3 text-sm text-white/50">
-            Select two different teams to start.
-          </p>
-        )}
       </div>
     </div>
   );
