@@ -26,7 +26,7 @@ def select_event_player(team_list, col, players_col):
     if col == 'CrdYAvg':
         for index in range(len(team_list[0][players_col])):
             if team_list[0][players_col].loc[index, 'Player'] == joueur:
-                team_list[0][players_col].loc[index,'CrdYAvg'] = 0.01
+                team_list[0][players_col].loc[index,'CrdYAvg'] = 0.00
                 team_list[0][players_col].reset_index(drop=True, inplace=True)
                 break
 

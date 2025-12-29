@@ -1,7 +1,24 @@
-import { useMemo, useState, useEffect, useRef  } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { useMemo, useState, useEffect, useRef, type JSX  } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { ArrowUp, ArrowDown, RefreshCw, Users,RectangleVertical } from "lucide-react";
+import { GiSoccerBall, GiRunningShoe  } from "react-icons/gi";
 import { TEAMS } from "../data/teams";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 type TeamSide = "HOME" | "AWAY";
 
@@ -36,50 +53,67 @@ export default function Match() {
   const [matchData, setMatchData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const hasSimulated = useRef(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newHomeId, setNewHomeId] = useState("");
+  const [newAwayId, setNewAwayId] = useState("");
+  const navigate = useNavigate();
 
   const { homeId, awayId } = useParams();
 
   const homeTeam = TEAMS.find((t) => t.id === homeId);
   const awayTeam = TEAMS.find((t) => t.id === awayId);
 
-  useEffect(() => {
-    const simulateMatch = async () => {
-      if (!homeTeam || !awayTeam) return;
+  const simulateMatch = async (home: string, away: string) => {
+    setLoading(true);
+    setError(null);
 
-      if (hasSimulated.current) return;
-      hasSimulated.current = true;
+    try {
+      const response = await fetch('http://localhost:8000/predict_match', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ home_team: home, away_team: away })
+      });
 
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch('http://localhost:8000/predict_match', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            home_team: homeTeam.name,
-            away_team: awayTeam.name
-          })
-        });
-
-        const data = await response.json();
-        
-        if (data.error) {
-          setError(data.error);
-        } else {
-          setMatchData(data);
-          console.log('Match data:', data);
-        }
-      } catch (err) {
-        console.error('Erreur réseau:', err);
-        setError('Erreur de connexion au serveur');
-      } finally {
-        setLoading(false);
+      const data = await response.json();
+      
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setMatchData(data);
       }
-    };
+    } catch (err) {
+      console.error('Erreur réseau:', err);
+      setError('Erreur de connexion au serveur');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    simulateMatch();
-  }, [homeTeam, awayTeam]);
+  const handleReplay = () => {
+    if (!homeTeam || !awayTeam) return;
+    hasSimulated.current = false;
+    simulateMatch(homeTeam.name, awayTeam.name);
+  };
+
+  const handleChangeTeams = () => {
+    if (!newHomeId || !newAwayId || newHomeId === newAwayId) return;
+    setIsDialogOpen(false);
+    navigate(`/match/${newHomeId}/${newAwayId}`);
+    hasSimulated.current = false;
+    
+    const newHome = TEAMS.find(t => t.id === newHomeId);
+    const newAway = TEAMS.find(t => t.id === newAwayId);
+    if (newHome && newAway) {
+      simulateMatch(newHome.name, newAway.name);
+    }
+  };
+
+  useEffect(() => {
+  if (!homeTeam || !awayTeam) return;
+  if (hasSimulated.current) return;
+  hasSimulated.current = true;
+  simulateMatch(homeTeam.name, awayTeam.name);
+}, [homeTeam, awayTeam]);
 
   const events: MatchEvent[] = useMemo(() => {
     if (!matchData) return [];
@@ -194,16 +228,6 @@ export default function Match() {
     };
   }, [matchData]);
 
-
-  if (!homeTeam || !awayTeam) {
-    return (
-      <div className="min-h-screen bg-[#050513] text-white p-6">
-        <Link to="/" className="text-white/70 hover:text-white">← Back</Link>
-        <p className="mt-6 text-white/70">Invalid teams selection.</p>
-      </div>
-    );
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#050513] text-white p-6 flex items-center justify-center">
@@ -251,13 +275,81 @@ export default function Match() {
 
       <div className="relative max-w-6xl mx-auto p-6">
         <div className="flex items-center justify-between mb-5">
-          <Link to="/" className="text-white/70 hover:text-white">
-            ← Back
-          </Link>
-          <div className="flex items-center gap-3">
-            <img src="/pl-logo.png" alt="Premier League" className="h-20 w-20" />
-          </div>
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={handleReplay}
+            className="bg-white/5 border-white/10  text-white cursor-pointer"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Rejouer
+          </Button>
+
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="bg-white/5 border-white/10 text-white cursor-pointer"
+              >
+                Changer les équipes
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-[#0a0a1b] border-white/10 text-white">
+              <DialogHeader>
+                <DialogTitle>Choisir de nouvelles équipes</DialogTitle>
+                <DialogDescription className="text-white/60">
+                  Sélectionnez deux équipes différentes
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                <div>
+                  <label className="text-sm text-white/70 mb-2 block">Domicile</label>
+                  <Select value={newHomeId} onValueChange={setNewHomeId}>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white cursor-pointer">
+                      <SelectValue placeholder="Choisir" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0a0a1b] border-white/10 text-white max-h-64 overflow-y-auto ">
+                      {TEAMS.map((team) => (
+                        <SelectItem className="cursor-pointer" key={team.id} value={team.id}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm text-white/70 mb-2 block">Extérieur</label>
+                  <Select value={newAwayId} onValueChange={setNewAwayId}>
+                    <SelectTrigger className="bg-white/5 border-white/10 text-white cursor-pointer">
+                      <SelectValue placeholder="Choisir" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#0a0a1b] border-white/10 text-white max-h-64 overflow-y-auto">
+                      {TEAMS.map((team) => (
+                        <SelectItem className="cursor-pointer" key={team.id} value={team.id}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  onClick={handleChangeTeams}
+                  disabled={!newHomeId || !newAwayId || newHomeId === newAwayId}
+                  className="w-full bg-white text-black hover:bg-white/90 cursor-pointer"
+                >
+                  Play
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
+
+        <div className="flex items-center gap-3">
+          <img src="/pl-logo.png" alt="PL" className="h-20 w-20" />
+        </div>
+      </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_0_60px_rgba(0,0,0,0.35)] overflow-hidden">
           <div className="px-6 py-5 border-b border-white/10">
@@ -280,8 +372,17 @@ export default function Match() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-0">
-            <div className="border-y lg:border-y-0 border-white/10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-0">
+            <SidePanel
+              title="LINEUP"
+              players={matchData?.lineups?.home_team?.starting_11 || []}
+              bench={matchData?.lineups?.home_team?.bench || []}
+              align="left"
+              accentClass="text-emerald-300"
+              events={events}
+              side="HOME"
+            />
+            <div className="border-y lg:border-y-0 lg:border-x border-white/10">
               <div className="flex items-center justify-center gap-2 px-4 py-3 border-b border-white/10">
                 <button
                   className={`${pillBase} ${
@@ -319,6 +420,15 @@ export default function Match() {
                 </span>
               </div>
             </div>
+            <SidePanel
+              title="LINEUP"
+              players={matchData?.lineups?.away_team?.starting_11 || []}
+              bench={matchData?.lineups?.away_team?.bench || []}
+              align="right"
+              accentClass="text-purple-300"
+              events={events}
+              side="AWAY"
+            />
           </div>
         </div>
       </div>
@@ -391,8 +501,8 @@ function labelForEvent(e: MatchEvent) {
 function renderEventText(e: MatchEvent) {
   if (e.type === "GOAL") {
     return (
-      <div>
-        <span className="mr-2">⚽</span>
+      <div className="flex gap-2">
+        <span className="mr-2"><GiSoccerBall className="w-4 h-4 text-white drop-shadow-lg" /></span>
         <span className="font-semibold">{e.scorer}</span>
         {e.assist ? <span className="text-white/60"> (Ast: {e.assist})</span> : null}
       </div>
@@ -400,8 +510,8 @@ function renderEventText(e: MatchEvent) {
   }
   if (e.type === "YELLOW") {
     return (
-      <div>
-        <span className="mr-2">🟨</span>
+      <div className="flex">
+        <span className="mr-2"><RectangleVertical className="w-4 h-6 text-yellow-400 fill-yellow-400" /></span>
         <span className="font-semibold">{e.player}</span>
       </div>
     );
@@ -409,7 +519,7 @@ function renderEventText(e: MatchEvent) {
   if (e.type === "RED") {
     return (
       <div>
-        <span className="mr-2">🟥</span>
+        <span className="mr-2"><RectangleVertical className="w-4 h-6 text-red-400 fill-red-400" /></span>
         <span className="font-semibold">{e.player}</span>
       </div>
     );
@@ -463,6 +573,172 @@ function StatsTable({
             <div className="text-right text-white/80">{r.a}</div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function SidePanel({
+  title,
+  players,
+  bench,
+  align,
+  accentClass,
+  events,
+  side,
+}: {
+  title: string;
+  players: Array<{ Player: string; Pos: string }>;
+  bench: Array<{ Player: string; Pos: string }>;
+  align: "left" | "right";
+  accentClass: string;
+  events: MatchEvent[];
+  side: TeamSide;
+}) {
+  const [view, setView] = useState<"lineup" | "bench">("lineup");
+
+  // Ordre des positions
+  const positionOrder: Record<string, number> = {
+    'GK': 1,
+    'DF': 2,
+    'MF': 3,
+    'FW': 4
+  };
+
+  // Fonction pour extraire la première position
+  const getFirstPosition = (pos: string): string => {
+    if (pos.includes(',')) {
+      return pos.split(',')[0];
+    }
+    return pos;
+  };
+
+  // Trier les joueurs par position
+  const sortedPlayers = [...players].sort((a, b) => {
+    const posA = getFirstPosition(a.Pos);
+    const posB = getFirstPosition(b.Pos);
+    return (positionOrder[posA] || 99) - (positionOrder[posB] || 99);
+  });
+
+  const sortedBench = [...bench].sort((a, b) => {
+    const posA = getFirstPosition(a.Pos);
+    const posB = getFirstPosition(b.Pos);
+    return (positionOrder[posA] || 99) - (positionOrder[posB] || 99);
+  });
+
+  const displayPlayers = view === "lineup" ? sortedPlayers : sortedBench;
+
+  // Fonction pour obtenir les symboles d'un joueur
+  const getPlayerSymbols = (playerName: string): JSX.Element[] => {
+    const symbols: JSX.Element[] = [];
+    
+    // Compter les buts
+    const goals = events.filter(
+    e => e.type === "GOAL" && e.side === side && e.scorer === playerName
+  ).length;
+  for (let i = 0; i < goals; i++) {
+    symbols.push(
+      <GiSoccerBall 
+        key={`goal-${i}`}
+        className="h-4 w-4 text-white drop-shadow-lg"
+      />
+    );
+  }
+
+    // Vérifier les passes décisives
+    const assists = events.filter(
+      e => e.type === "GOAL" && e.side === side && e.assist === playerName
+    ).length;
+    for (let i = 0; i < assists; i++) {
+      symbols.push(
+        <GiRunningShoe 
+          key={`assist-${i}`}
+          className="h-5 w-5 text-white/70 drop-shadow-lg"
+        />
+      );
+    }
+
+    // Vérifier les cartons jaunes
+    const yellows = events.filter(
+      e => e.type === "YELLOW" && e.side === side && e.player === playerName
+    ).length;
+    for (let i = 0; i < yellows; i++) {
+      symbols.push(<RectangleVertical className="w-4 h-6 text-yellow-400 fill-yellow-400" />);
+    }
+
+    // Vérifier les cartons rouges
+    const reds = events.filter(
+      e => e.type === "RED" && e.side === side && e.player === playerName
+    ).length;
+    for (let i = 0; i < reds; i++) {
+      symbols.push(<RectangleVertical className="w-4 h-6 text-red-400 fill-red-400" />);
+    }
+
+    return symbols;
+  };
+
+  return (
+    <div className="p-4 md:p-5">
+      <div className={`flex items-center ${align === "left" ? "justify-start" : "justify-end"} gap-3 mb-3`}>
+        <button
+          className={`text-xs font-semibold tracking-wider ${
+            view === "lineup" ? accentClass : "text-white/50"
+          }`}
+          onClick={() => setView("lineup")}
+        >
+          LINEUP
+        </button>
+        <span className="text-white/20">|</span>
+        <button
+          className={`text-xs font-semibold tracking-wider ${
+            view === "bench" ? accentClass : "text-white/50"
+          }`}
+          onClick={() => setView("bench")}
+        >
+          BENCH
+        </button>
+      </div>
+
+      <div className="space-y-2">
+        {displayPlayers.map((p, idx) => {
+          const symbols = getPlayerSymbols(p.Player);
+          
+          return (
+            <div
+              key={`${p.Player}-${idx}`}
+              className={`flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 ${
+                align === "left" ? "" : "flex-row-reverse"
+              }`}
+            >
+              <div className={`flex items-center gap-3 ${align === "left" ? "" : "flex-row-reverse"}`}>
+                <span className="text-xs text-white/50 w-8">{getFirstPosition(p.Pos)}</span>
+                {align === "left" ? (
+                  <div className="flex items-center gap-2">
+                  <span className="text-sm">{p.Player}</span>
+                  {symbols.length > 0 && (
+                    <div className="flex gap-1">
+                      {symbols.map((symbol, i) => (
+                        <span key={i} className="text-xs">{symbol}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                ) : (
+                  <div className="flex items-center gap-2 flex-row-reverse">
+                  <span className="text-sm">{p.Player}</span>
+                  {symbols.length > 0 && (
+                    <div className="flex gap-1">
+                      {symbols.map((symbol, i) => (
+                        <span key={i} className="text-xs">{symbol}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
