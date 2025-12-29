@@ -10,6 +10,9 @@ def select_event_player(team_list, col, players_col):
 
     list_weight = [float(player[col]) for player in players_list]
 
+    if sum(list_weight) == 0:
+        list_weight = [1.0] * len(players_list)
+
     joueur = random.choices(players_list, weights=list_weight, k=1)
     joueur = joueur[0]['Player']
     team_list[0][players_col] = joueur_team
@@ -23,7 +26,7 @@ def select_event_player(team_list, col, players_col):
     if col == 'CrdYAvg':
         for index in range(len(team_list[0][players_col])):
             if team_list[0][players_col].loc[index, 'Player'] == joueur:
-                team_list[0][players_col].loc[index,'CrdYAvg'] = 0.01
+                team_list[0][players_col].loc[index,'CrdYAvg'] = 0.00
                 team_list[0][players_col].reset_index(drop=True, inplace=True)
                 break
 
