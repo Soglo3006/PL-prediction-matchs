@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fetch_premier_league_data import data_2324
 from Predict_match import predict_future_match, model_home, model_away, model_possession
+from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
 app = FastAPI()
 
@@ -40,6 +41,12 @@ def predict_match(request:MatchRequest):
         prediction_tirs_cadre_domicile, prediction_tirs_cadre_exterieur,
         prediction_fouls_domicile, prediction_fouls_exterieur,
         prediction_corner_domicile, prediction_corner_exterieur) = predicted_result  
+
+    home_lineup = data_joueur_predictions_buteurs[home_team]['Starting11Players'][['Player', 'Pos']].to_dict('records')
+    home_bench = data_joueur_predictions_buteurs[home_team]['BenchPlayers'][['Player', 'Pos']].to_dict('records')
+    
+    away_lineup = data_joueur_predictions_buteurs[away_team]['Starting11Players'][['Player', 'Pos']].to_dict('records')
+    away_bench = data_joueur_predictions_buteurs[away_team]['BenchPlayers'][['Player', 'Pos']].to_dict('records')
      
     prediction = {
             "possesion": {
@@ -89,7 +96,17 @@ def predict_match(request:MatchRequest):
             "joueurs_rentres": {
                 "home_team": joueur_rentre_home,
                 "away_team": joueur_rentre_away
+            },
+            "lineups": {
+            "home_team": {
+                "starting_11": home_lineup,
+                "bench": home_bench
+            },
+            "away_team": {
+                "starting_11": away_lineup,
+                "bench": away_bench
             }
         }
-    
+        }
     return prediction
+
