@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef, type JSX  } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ArrowUp, ArrowDown, RefreshCw, Users,RectangleVertical } from "lucide-react";
+import { ArrowUp, ArrowDown, RefreshCw, RectangleVertical } from "lucide-react";
 import { GiSoccerBall, GiRunningShoe  } from "react-icons/gi";
 import { TEAMS } from "../data/teams";
 import {
@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -111,18 +112,17 @@ export default function Match() {
   };
 
   useEffect(() => {
-  if (!homeTeam || !awayTeam) return;
-  if (hasSimulated.current) return;
-  hasSimulated.current = true;
-  simulateMatch(homeTeam.name, awayTeam.name);
-}, [homeTeam, awayTeam]);
+    if (!homeTeam || !awayTeam) return;
+    if (hasSimulated.current) return;
+    hasSimulated.current = true;
+    simulateMatch(homeTeam.name, awayTeam.name);
+  }, [homeTeam, awayTeam]);
 
   const events: MatchEvent[] = useMemo(() => {
     if (!matchData) return [];
     
     const allEvents: MatchEvent[] = [];
 
-    // Ajouter les buts
     if (matchData?.buteurs?.home_team) {
       matchData.buteurs.home_team.forEach(([scorer, minute]: [string, number]) => {
         const assist = matchData.passeur.home_team.find(([_, m]: [string, number]) => m === minute)?.[0];
@@ -149,7 +149,6 @@ export default function Match() {
       });
     }
 
-    // Ajouter les cartons jaunes
     if (matchData?.yellow_cards?.home_team) {
       matchData.yellow_cards.home_team.forEach(([player, minute]: [string, number]) => {
         allEvents.push({ minute, type: "YELLOW", side: "HOME", player });
@@ -162,7 +161,6 @@ export default function Match() {
       });
     }
 
-    // Ajouter les cartons rouges
     if (matchData?.red_cards?.home_team) {
       matchData.red_cards.home_team.forEach(([player, minute]: [string, number]) => {
         allEvents.push({ minute, type: "RED", side: "HOME", player });
@@ -175,7 +173,6 @@ export default function Match() {
       });
     }
 
-    // Ajouter les substitutions
     if (matchData?.joueurs_remplaces?.home_team && matchData?.joueurs_rentres?.home_team) {
       matchData.joueurs_remplaces.home_team.forEach(([out, minute]: [string, number], idx: number) => {
         const inPlayer = matchData.joueurs_rentres.home_team[idx]?.[0];
@@ -241,12 +238,12 @@ export default function Match() {
     );
   }
 
-  if (error) {
+  if (error || !homeTeam || !awayTeam) {
     return (
       <div className="min-h-screen bg-[#050513] text-white p-6">
         <Link to="/" className="text-white/70 hover:text-white">← Back</Link>
         <div className="mt-6 text-center">
-          <p className="text-red-400">{error}</p>
+          <p className="text-red-400">{error || "Équipes non trouvées"}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="mt-4 px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20"
@@ -376,7 +373,6 @@ export default function Match() {
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] gap-0">
             <SidePanel
-              title="LINEUP"
               players={matchData?.lineups?.home_team?.starting_11 || []}
               bench={matchData?.lineups?.home_team?.bench || []}
               align="left"
@@ -423,7 +419,6 @@ export default function Match() {
               </div>
             </div>
             <SidePanel
-              title="LINEUP"
               players={matchData?.lineups?.away_team?.starting_11 || []}
               bench={matchData?.lineups?.away_team?.bench || []}
               align="right"
@@ -526,6 +521,7 @@ function renderEventText(e: MatchEvent) {
       </div>
     );
   }
+  // Type SUB
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -581,7 +577,6 @@ function StatsTable({
 }
 
 function SidePanel({
-  title,
   players,
   bench,
   align,
@@ -589,7 +584,6 @@ function SidePanel({
   events,
   side,
 }: {
-  title: string;
   players: Array<{ Player: string; Pos: string }>;
   bench: Array<{ Player: string; Pos: string }>;
   align: "left" | "right";
@@ -599,7 +593,6 @@ function SidePanel({
 }) {
   const [view, setView] = useState<"lineup" | "bench">("lineup");
 
-  // Ordre des positions
   const positionOrder: Record<string, number> = {
     'GK': 1,
     'DF': 2,
@@ -607,7 +600,6 @@ function SidePanel({
     'FW': 4
   };
 
-  // Fonction pour extraire la première position
   const getFirstPosition = (pos: string): string => {
     if (pos.includes(',')) {
       return pos.split(',')[0];
@@ -615,7 +607,6 @@ function SidePanel({
     return pos;
   };
 
-  // Trier les joueurs par position
   const sortedPlayers = [...players].sort((a, b) => {
     const posA = getFirstPosition(a.Pos);
     const posB = getFirstPosition(b.Pos);
@@ -630,24 +621,21 @@ function SidePanel({
 
   const displayPlayers = view === "lineup" ? sortedPlayers : sortedBench;
 
-  // Fonction pour obtenir les symboles d'un joueur
   const getPlayerSymbols = (playerName: string): JSX.Element[] => {
     const symbols: JSX.Element[] = [];
     
-    // Compter les buts
     const goals = events.filter(
-    e => e.type === "GOAL" && e.side === side && e.scorer === playerName
-  ).length;
-  for (let i = 0; i < goals; i++) {
-    symbols.push(
-      <GiSoccerBall 
-        key={`goal-${i}`}
-        className="h-4 w-4 text-white drop-shadow-lg"
-      />
-    );
-  }
+      e => e.type === "GOAL" && e.side === side && e.scorer === playerName
+    ).length;
+    for (let i = 0; i < goals; i++) {
+      symbols.push(
+        <GiSoccerBall 
+          key={`goal-${i}`}
+          className="h-4 w-4 text-white drop-shadow-lg"
+        />
+      );
+    }
 
-    // Vérifier les passes décisives
     const assists = events.filter(
       e => e.type === "GOAL" && e.side === side && e.assist === playerName
     ).length;
@@ -660,20 +648,18 @@ function SidePanel({
       );
     }
 
-    // Vérifier les cartons jaunes
     const yellows = events.filter(
       e => e.type === "YELLOW" && e.side === side && e.player === playerName
     ).length;
     for (let i = 0; i < yellows; i++) {
-      symbols.push(<RectangleVertical className="w-4 h-6 text-yellow-400 fill-yellow-400" />);
+      symbols.push(<RectangleVertical key={`yellow-${i}`} className="w-4 h-6 text-yellow-400 fill-yellow-400" />);
     }
 
-    // Vérifier les cartons rouges
     const reds = events.filter(
       e => e.type === "RED" && e.side === side && e.player === playerName
     ).length;
     for (let i = 0; i < reds; i++) {
-      symbols.push(<RectangleVertical className="w-4 h-6 text-red-400 fill-red-400" />);
+      symbols.push(<RectangleVertical key={`red-${i}`} className="w-4 h-6 text-red-400 fill-red-400" />);
     }
 
     return symbols;
