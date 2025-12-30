@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 type TeamSide = "HOME" | "AWAY";
 
 type MatchEvent =
@@ -68,7 +70,7 @@ export default function Match() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8000/predict_match', {
+      const response = await fetch(`${API_URL}/predict_match`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ home_team: home, away_team: away })

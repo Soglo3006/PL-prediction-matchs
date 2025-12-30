@@ -17,7 +17,16 @@ app.add_middleware(
 
 class MatchRequest(BaseModel):
     home_team: str
-    away_team: str  
+    away_team: str 
+
+
+@app.get("/")
+def read_root():
+    return {"status": "API is running", "message": "Premier League Match Predictor"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"} 
 
 @app.post("/predict_match")
 def predict_match(request:MatchRequest):
