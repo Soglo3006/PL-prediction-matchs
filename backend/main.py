@@ -25,8 +25,8 @@ def read_root():
     return {"status": "API is running", "message": "Premier League Match Predictor"}
 
 @app.get("/health")
-def health_check():
-    return {"status": "healthy"} 
+def health():
+    return {"ok": True}
 
 @app.post("/predict_match")
 def predict_match(request:MatchRequest):

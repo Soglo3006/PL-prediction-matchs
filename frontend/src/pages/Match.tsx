@@ -66,11 +66,21 @@ export default function Match() {
   const homeTeam = TEAMS.find((t) => t.id === homeId);
   const awayTeam = TEAMS.find((t) => t.id === awayId);
 
+  const warmup = async () => {
+    try {
+      await fetch(`${API_URL}/health`, { method: "GET" });
+    } catch {
+      // Ignore errors during warmup
+    }
+  };
+
   const simulateMatch = async (home: string, away: string) => {
     setLoading(true);
     setError(null);
 
     try {
+      await warmup();
+
       const response = await fetch(`${API_URL}/predict_match`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
