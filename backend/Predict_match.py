@@ -118,7 +118,15 @@ def predict_match_stats(model_buts_dom,model_buts_exterieur,model_possesion_dom,
     
     #print((prediction_xg_domicile),(prediction_xg_exterieur))
     
-    return home_possesion,away_possession,prediction_buts_domicile,prediction_buts_exterieur, prediction_fouls_domicile, prediction_fouls_exterieur, prediction_carton_jaunes_domicile, prediction_carton_jaunes_exterieur, prediction_carton_rouges_domicile, prediction_carton_rouges_exterieur
+    return (home_possesion, away_possession,
+                prediction_buts_domicile, prediction_buts_exterieur,
+                prediction_tirs_domicile, prediction_tirs_exterieur,
+                prediction_tirs_cadre_domicile, prediction_tirs_cadre_exterieur,
+                prediction_fouls_domicile, prediction_fouls_exterieur,
+                prediction_carton_jaunes_domicile, prediction_carton_jaunes_exterieur,
+                prediction_carton_rouges_domicile, prediction_carton_rouges_exterieur,
+                prediction_corner_domicile, prediction_corner_exterieur)
+
 
 def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     
@@ -134,7 +142,14 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
     foul_features = pd.DataFrame([[match_data[f] for f in features_foul]], columns=features_foul)
     xg_features = pd.DataFrame([[match_data[f] for f in features_xG]], columns=features_xG)
     
-    _, _, prediction_buts_domicile, prediction_buts_exterieur,_,_,home_yellow,away_yellow,home_red, away_red = predict_match_stats(
+    (home_possesion, away_possession, 
+     prediction_buts_domicile, prediction_buts_exterieur, 
+     prediction_tirs_domicile, prediction_tirs_exterieur,
+     prediction_tirs_cadre_domicile, prediction_tirs_cadre_exterieur,
+     prediction_fouls_domicile, prediction_fouls_exterieur, 
+     home_yellow, away_yellow, 
+     home_red, away_red,
+     prediction_corner_domicile, prediction_corner_exterieur) = predict_match_stats(
         model_1, model_2, model_3, possesion_features, match_features, tirs_features, tirs_cadres_features,
         carton_jaunes_features, carton_rouge_features, corners_features, foul_features, xg_features
     )
@@ -146,4 +161,15 @@ def predict_future_match(h_team, a_team, model_1, model_2, model_3, data):
         a_team,prediction_buts_exterieur, away_yellow, away_red
     )
 
-    return prediction_buts_domicile, prediction_buts_exterieur, buteurs_home, buteurs_away, passeur_home, passeur_away, yellow_home_players, yellow_away_players, red_home_players, red_away_players, joueur_remplacer_home, joueur_remplacer_away, joueur_rentre_home, joueur_rentre_away
+    return (prediction_buts_domicile, prediction_buts_exterieur, 
+            buteurs_home, buteurs_away, 
+            passeur_home, passeur_away, 
+            yellow_home_players, yellow_away_players, 
+            red_home_players, red_away_players, 
+            joueur_remplacer_home, joueur_remplacer_away, 
+            joueur_rentre_home, joueur_rentre_away,
+            home_possesion, away_possession,
+            prediction_tirs_domicile, prediction_tirs_exterieur,
+            prediction_tirs_cadre_domicile, prediction_tirs_cadre_exterieur,
+            prediction_fouls_domicile, prediction_fouls_exterieur,
+            prediction_corner_domicile, prediction_corner_exterieur)

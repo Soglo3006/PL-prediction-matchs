@@ -1,4 +1,5 @@
 import random
+import copy
 from stats_et_changements import select_event_player, changement_de_joueur
 from fetch_premier_league_players_data import data_joueur_predictions_buteurs
 
@@ -33,11 +34,17 @@ def process_red_card(minute, red_team_players, cartons_rouges_team, team_liste):
         red_team_players.append((joueur, minute))
     return red_team_players, team_liste
 
-def process_substitution(minute, joueur_remplacer_team, remplacant_nb, team_liste, team, joueur_rentre_team):
+def process_substitution(minute, joueur_remplacer_team, remplacant_nb, team_liste, team, joueur_rentre_team,team_data_copy):
     if len(joueur_remplacer_team) < remplacant_nb:
+        if len(team_liste[0]['BenchPlayers']) == 0:
+            return joueur_remplacer_team, joueur_rentre_team, team_liste
+        bench_probs = team_liste[0]['BenchPlayers']['ProbFinal'].sum()
+        if bench_probs == 0:
+            return joueur_remplacer_team, joueur_rentre_team, team_liste
+        
         starting_player, team_liste = select_event_player(team_liste, 'ProbOut', 'Starting11Players')
         bench_player, team_liste = select_event_player(team_liste, 'ProbFinal', 'BenchPlayers')
-        resultat, updated_team = changement_de_joueur(data_joueur_predictions_buteurs, team, starting_player, bench_player)
+        resultat, updated_team = changement_de_joueur(team_data_copy, team, starting_player, bench_player)
         team_liste = updated_team
         resultat = resultat[0]['Player']
         joueur_remplacer_team.append((starting_player, minute))
@@ -47,7 +54,7 @@ def process_substitution(minute, joueur_remplacer_team, remplacant_nb, team_list
 
 def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_rouges_team,remplacant_nb,team,
                   buteur_team,passeur_team,minutes_buts, minutes_changements, minutes_fautes_cartons_jaunes,
-                  minutes_fautes_carton_rouge,minutes_stats_team):
+                  minutes_fautes_carton_rouge,minutes_stats_team,team_data_copy):
     
     yellow_team_players = []
     red_team_players = []
@@ -69,12 +76,13 @@ def match_process(prediction_buts_team, team_liste,cartons_jaunes_team,cartons_r
 
         if minute_match in minutes_changements:
             joueur_remplacer_team, joueur_rentre_team, team_liste = process_substitution(
-                minute_match, joueur_remplacer_team, remplacant_nb, team_liste, team, joueur_rentre_team)
+                minute_match, joueur_remplacer_team, remplacant_nb, team_liste, team, joueur_rentre_team,team_data_copy)
             
             
     return buteur_team, passeur_team, yellow_team_players, red_team_players, joueur_remplacer_team, joueur_rentre_team
 
 def simulate_match(team,prediction_buts_team,team_yellow,team_red):
+    team_data_copy = copy.deepcopy(data_joueur_predictions_buteurs)
     team_liste = []
     buteurs_team = []
     passeur_team = []
@@ -83,7 +91,8 @@ def simulate_match(team,prediction_buts_team,team_yellow,team_red):
     probabilites_minutes_changement = [0.05,0.10,0.20]
     carton_jaunes_team = team_yellow
     carton_rouges_team = team_red
-    team_liste.append(data_joueur_predictions_buteurs[team])
+
+    team_liste.append(team_data_copy[team])
 
     minutes_buts_team = []
     minutes_changement_team = []
@@ -100,7 +109,7 @@ def simulate_match(team,prediction_buts_team,team_yellow,team_red):
 
     buteurs_team, passeur_team,yellow_team,red_team,joueur_remplacer_team,joueur_rentre_team = (match_process(prediction_buts_team,team_liste,carton_jaunes_team,carton_rouges_team,nb_remplacant_max_team,
                     team,buteurs_team,passeur_team,minutes_buts_team, minutes_changement_team, minutes_fautes_cartons_jaunes_team,
-                    minutes_fautes_cartons_rouges_team,minutes_stats_team))
+                    minutes_fautes_cartons_rouges_team,minutes_stats_team,team_data_copy))
     
     return buteurs_team, passeur_team,yellow_team,red_team,joueur_remplacer_team,joueur_rentre_team
     
