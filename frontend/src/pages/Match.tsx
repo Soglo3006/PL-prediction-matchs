@@ -496,45 +496,56 @@ function labelForEvent(e: MatchEvent) {
 }
 
 function renderEventText(e: MatchEvent) {
-  if (e.type === "GOAL") {
-    return (
-      <div className="flex gap-2">
-        <span className="mr-2"><GiSoccerBall className="w-4 h-4 text-white drop-shadow-lg" /></span>
-        <span className="font-semibold">{e.scorer}</span>
-        {e.assist ? <span className="text-white/60"> (Ast: {e.assist})</span> : null}
-      </div>
-    );
+  switch (e.type) {
+    case "GOAL":
+      return (
+        <div className="flex gap-2">
+          <span className="mr-2">
+            <GiSoccerBall className="w-4 h-4 text-white drop-shadow-lg" />
+          </span>
+          <span className="font-semibold">{e.scorer}</span>
+          {e.assist ? (
+            <span className="text-white/60"> (Ast: {e.assist})</span>
+          ) : null}
+        </div>
+      );
+
+    case "YELLOW":
+      return (
+        <div className="flex">
+          <span className="mr-2">
+            <RectangleVertical className="w-4 h-6 text-yellow-400 fill-yellow-400" />
+          </span>
+          <span className="font-semibold">{e.player}</span>
+        </div>
+      );
+
+    case "RED":
+      return (
+        <div className="flex">
+          <span className="mr-2">
+            <RectangleVertical className="w-4 h-6 text-red-400 fill-red-400" />
+          </span>
+          <span className="font-semibold">{e.player}</span>
+        </div>
+      );
+
+    case "SUB":
+      return (
+        <div>
+          <div className="flex items-center gap-2">
+            <ArrowUp className="h-4 w-4 text-emerald-400" />
+            <span className="font-semibold">{e.in}</span>
+          </div>
+          <div className="flex items-center gap-2 text-white/60">
+            <ArrowDown className="h-4 w-4 text-red-400" />
+            <span>{e.out}</span>
+          </div>
+        </div>
+      );
   }
-  if (e.type === "YELLOW") {
-    return (
-      <div className="flex">
-        <span className="mr-2"><RectangleVertical className="w-4 h-6 text-yellow-400 fill-yellow-400" /></span>
-        <span className="font-semibold">{e.player}</span>
-      </div>
-    );
-  }
-  if (e.type === "RED") {
-    return (
-      <div>
-        <span className="mr-2"><RectangleVertical className="w-4 h-6 text-red-400 fill-red-400" /></span>
-        <span className="font-semibold">{e.player}</span>
-      </div>
-    );
-  }
-  // Type SUB
-  return (
-    <div>
-      <div className="flex items-center gap-2">
-        <ArrowUp className="h-4 w-4 text-emerald-400" />
-        <span className="font-semibold">{e.in}</span>
-      </div>
-      <div className="flex items-center gap-2 text-white/60">
-        <ArrowDown className="h-4 w-4 text-red-400" />
-        <span>{e.out}</span>
-      </div>
-    </div>
-  );
 }
+
 
 function StatsTable({
   homeName,
